@@ -1,0 +1,53 @@
+{
+  "knowledge_version": "democlub-2026-11-03-v1",
+  "provenance": "Original synthetic preparation material created on 2026-11-03. DemoClub is fictional. Not an official policy or a real service.",
+  "language": "en",
+  "documents": [
+    {
+      "id": "D01",
+      "title": "DemoClub workshop information",
+      "version": "2",
+      "status": "active",
+      "effective_date": "2026-11-03",
+      "sections": [
+        {"id": "event", "text": "The Intro to AI Tools workshop takes place on 12 November 2026 from 19:00 to 20:30 MYT. It is an online workshop. The capacity is 24 participants. Participation is free."},
+        {"id": "registration", "text": "Registration closes on 11 November 2026 at 18:00 MYT. A person registers through the DemoClub event form. A confirmation email is sent by 11 November at 20:00 MYT. Submitting the form does not guarantee a place. If all 24 places are filled, later applicants join a waiting list."},
+        {"id": "eligibility", "text": "The workshop is open to currently enrolled university students aged 18 or older. No prior programming experience is required. Participants need a laptop with an up-to-date web browser and an internet connection. There is no certificate for attending this workshop."}
+      ]
+    },
+    {
+      "id": "D02",
+      "title": "DemoClub support guide",
+      "version": "1",
+      "status": "active",
+      "effective_date": "2026-11-03",
+      "sections": [
+        {"id": "contact", "text": "The fictional support address is help@democlub.invalid. Support hours are Monday to Friday, 10:00 to 18:00 MYT. The target first response time is two business days. There is no live-chat service or guaranteed immediate response."},
+        {"id": "request", "text": "A support request should contain the event name, a description of the problem, and a screenshot with private information removed if useful. Never send passwords, API keys or private identity documents."},
+        {"id": "cancellation", "text": "To cancel an Intro to AI Tools workshop registration, reply to the confirmation email before 11 November 2026 at 18:00 MYT. Cancellation releases a place to the waiting list. Transfers to a different person are not supported."}
+      ]
+    },
+    {
+      "id": "D03",
+      "title": "DemoClub event account guide",
+      "version": "1",
+      "status": "active",
+      "effective_date": "2026-11-03",
+      "sections": [
+        {"id": "reset", "text": "A DemoClub event-account password reset link expires after 30 minutes. At most three password-reset requests are allowed in one hour. If a link expires, request a new one. Support never asks users to send their current password."},
+        {"id": "access", "text": "The workshop joining link is included in the confirmation email. A confirmed participant who cannot find the email should check the spam folder and then contact support. The workshop joining link is not published in this knowledge base."}
+      ]
+    },
+    {
+      "id": "D04",
+      "title": "DemoClub earlier workshop draft",
+      "version": "1",
+      "status": "superseded",
+      "effective_date": "2026-10-20",
+      "superseded_by": "D01",
+      "sections": [
+        {"id": "event", "text": "Outdated draft: the Intro to AI Tools workshop was planned for 10 November 2026, with 20 places and registration closing at 12:00 MYT on 9 November. This draft is superseded by D01 and must not be treated as current information."}
+      ]
+    }
+  ]
+}

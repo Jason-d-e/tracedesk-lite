@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TraceDesk Lite</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#ask">Skip to the question box</a>
+
+  <header class="top">
+    <div class="wrap top-inner">
+      <div>
+        <h1>TraceDesk Lite</h1>
+        <p class="tagline">The bottom line first, a checklist you can tick, and a source for every word.</p>
+      </div>
+      <div class="controls" role="group" aria-label="Reading preferences">
+        <button id="focus-toggle" type="button" class="toggle" aria-pressed="false">Focus mode</button>
+        <button id="bionic-toggle" type="button" class="toggle" aria-pressed="false" title="Bolds the start of each English word. Some readers find it easier to follow; it does not suit everyone.">Bold word starts</button>
+        <p id="model-status" class="chip chip-muted" role="status">Checking model…</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="demo-note">
+      <strong>Demo data.</strong> “DemoClub” is a fictional student club made up for this prototype.
+      Its documents are not a real service or policy.
+    </p>
+
+    <section class="card" aria-labelledby="ask-heading">
+      <h2 id="ask-heading">Ask a question</h2>
+      <form id="ask-form" novalidate>
+        <label for="ask" class="label">Your question <span class="hint">(any language, up to 500 characters)</span></label>
+        <textarea id="ask" name="question" rows="3" maxlength="500" required
+          placeholder="e.g. How do I cancel my place?  /  怎么取消报名？"></textarea>
+        <div class="form-row">
+          <span id="char-count" class="hint" aria-live="off">0 / 500</span>
+          <button id="ask-button" type="submit" class="btn btn-primary">Ask</button>
+        </div>
+      </form>
+
+      <div class="examples" aria-label="Example questions">
+        <span class="hint">Try:</span>
+        <button type="button" class="example">How do I cancel my place?</button>
+        <button type="button" class="example">工作坊是哪天举办？</button>
+        <button type="button" class="example">我不去了，可以把名额转给朋友吗？</button>
+        <button type="button" class="example">Who is the instructor?</button>
+        <button type="button" class="example">那个链接多久失效？</button>
+        <button type="button" class="example">The old poster said 10 November. Which date is right?</button>
+      </div>
+    </section>
+
+    <section id="result" class="card" aria-live="polite" aria-busy="false" hidden></section>
+
+    <section class="card secondary" aria-labelledby="sources-heading">
+      <details id="sources">
+        <summary><h2 id="sources-heading">Documents this desk can use</h2></summary>
+        <p class="hint" id="kb-version"></p>
+        <div id="doc-list"></div>
+      </details>
+    </section>
+
+    <section class="card how secondary" aria-labelledby="how-heading">
+      <h2 id="how-heading">Designed for readers who lose focus easily</h2>
+      <ul>
+        <li><strong>Bottom line first.</strong> One short sentence, then a checklist of what to do and by when. Details stay folded away.</li>
+        <li><strong>Focus mode</strong> hides everything else and enlarges the text. <strong>Listen</strong> reads the answer aloud using your browser's own voice.</li>
+        <li><strong>Nothing made up.</strong> Every sentence and every step must quote the club's current documents, and the server checks each quote word for word. If a deadline is not in the quoted text, it is flagged. If nothing can be verified, the answer is withheld.</li>
+        <li><strong>Asks instead of guessing</strong> when a question is ambiguous, and says so plainly when the documents don't cover something.</li>
+      </ul>
+      <p class="hint">Design guided by the W3C guidance <em>Making Content Usable for People with Cognitive and Learning Disabilities</em>. This is not a medical tool and does not ask about or record any health information.</p>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    <p>TraceDesk Lite · prototype · answers can still be wrong — check the quoted source before acting.</p>
+  </footer>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
