@@ -65,11 +65,11 @@ browser (public/)  ──POST /api/ask──►  server.js (Express)
 
 | What | Result |
 | --- | --- |
-| Real model calls | 15, all successful. Run on the demo questions only, so this is not an accuracy evaluation. |
-| Quotes and steps that failed verification | 0 |
+| Real model calls | 110, all successful: 20 smoke-test calls, 8 questions typed into the app and 82 evaluation calls. These are demo questions only, so this is not an accuracy evaluation. |
+| Quotes and steps that failed verification | 0 across all 110 calls |
 | Expected outcome matched (smoke cases TD-001, 018, 021, 029, 033, 037, 040) | 7 of 7 |
-| Median / max response time | 3.1 s / 6.1 s |
-| Total cost of all 15 calls | about US$0.009 |
+| Median / max response time | 2.6 s / 6.2 s |
+| Total cost of all 110 calls | about US$0.06 |
 | Automated accessibility check (axe-core 4.10.2, WCAG 2.2 A/AA rules) | 0 violations, in both normal and focus mode |
 | 40-question comparison (promptfoo): plain prompt vs TraceDesk prompt. Same model, documents, schema and server checks. | On the held-out 20 questions, all automatic checks passed for **19/20** with the TraceDesk prompt vs **15/20** with the plain prompt. The difference is checklist deadlines: the plain prompt attached deadlines the quoted text did not state. The TraceDesk prompt costs about 35% more per question and is about 1.6 s slower (median). Automatic checks only, so this is not an accuracy figure. The full one-page brief is in `EVALUATION.md`. |
 
@@ -98,7 +98,7 @@ npm start                     # then open http://localhost:3000
 | 2026-11-03 | The fictional DemoClub knowledge base (`data/knowledge.json`) and a set of draft test questions. No application code. |
 | 2026-11-09 onward | Everything in `app/`: the server, quote and deadline verification, the accessibility features, the web interface, the tests and the smoke script. |
 
-**AI assistance.** The fictional documents and the draft questions were written with AI help. The application code was written with an AI coding assistant (Claude Code) under the author's direction.
+**AI assistance.** The fictional documents and the draft questions were written with AI help. The application code was written with an AI coding assistant (Claude Code) under the team's direction.
 
 **Reused work.** Reused open-source components and adapted text are listed in `THIRD_PARTY_NOTICES.md` at the repository root:
 
