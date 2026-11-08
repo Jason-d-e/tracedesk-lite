@@ -176,7 +176,7 @@ const en = {
     },
     quality: {
       intro: 'We compared the TraceDesk prompt with a plain “answer from the documents” prompt: same model, documents and checks.',
-      chart: 'Automatic checks passed on {{n}} held-out questions',
+      chart: 'Share of the {{n}} check questions that passed each automatic check (latest run, %)',
       plain: 'Plain prompt',
       ours: 'TraceDesk prompt',
       note: 'Automatic checks only, on a small fictional dataset. This is not an accuracy figure; fact correctness still needs human review.',

@@ -42,12 +42,13 @@ const when = (iso: string, lang: string) => (iso ? new Date(iso).toLocaleString(
 function Stat({ label, value, icon, color }: { label: string; value: ReactNode; icon: ReactNode; color: string }) {
   return (
     <Paper withBorder radius="lg" p="md">
-      <Group justify="space-between" align="flex-start">
-        <div>
-          <Text size="xs" c="dimmed" tt="uppercase" fw={700}>{label}</Text>
+      {/* nowrap keeps the icon on the right even when a long label wraps; labels stay in normal case (easier to read than capitals). */}
+      <Group justify="space-between" align="flex-start" wrap="nowrap" gap="sm">
+        <div style={{ minWidth: 0 }}>
+          <Text size="sm" c="dimmed" fw={600}>{label}</Text>
           <Text fw={800} fz={32} lh={1.2}>{value}</Text>
         </div>
-        <ThemeIcon size={42} radius="md" variant="light" color={color} aria-hidden>{icon}</ThemeIcon>
+        <ThemeIcon size={42} radius="md" variant="light" color={color} aria-hidden style={{ flexShrink: 0 }}>{icon}</ThemeIcon>
       </Group>
     </Paper>
   )
@@ -66,7 +67,8 @@ export function Overview() {
   const donut = (Object.keys(STATUS_COLOR) as Status[])
     .filter((s) => ins.by_status[s])
     .map((s) => ({ name: t(`organiser.statusShort.${s}`), value: ins.by_status[s] ?? 0, color: STATUS_COLOR[s] }))
-  const bars = ins.top_gaps.slice(0, 6).map((g) => ({ question: g.question.length > 28 ? `${g.question.slice(0, 27)}…` : g.question, count: g.asked + g.reported }))
+  // Axis labels wrap onto several lines, so questions are shown in full unless they are very long.
+  const bars = ins.top_gaps.slice(0, 6).map((g) => ({ question: g.question.length > 70 ? `${g.question.slice(0, 69)}…` : g.question, count: g.asked + g.reported }))
 
   return (
     <Stack gap="lg">
@@ -97,7 +99,7 @@ export function Overview() {
           <Card withBorder radius="lg" padding="lg">
             <Title order={2} size="h4" mb="md">{t('organiser.overview.gapsChart')}</Title>
             {bars.length ? (
-              <BarChart h={240} data={bars} dataKey="question" orientation="vertical" yAxisProps={{ width: 170 }} barProps={{ maxBarSize: 34, radius: 6 }} series={[{ name: 'count', label: t('organiser.overview.times'), color: 'orange.6' }]} gridAxis="none" />
+              <BarChart h={280} data={bars} dataKey="question" orientation="vertical" yAxisProps={{ width: 200, interval: 0 }} barProps={{ maxBarSize: 34, radius: 6 }} series={[{ name: 'count', label: t('organiser.overview.times'), color: 'orange.6' }]} gridAxis="none" />
             ) : (
               <Text c="dimmed">{t('organiser.gaps.empty')}</Text>
             )}
@@ -273,7 +275,7 @@ export function Docs() {
 
 /* ---------------- Answer quality ---------------- */
 export function Quality() {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const { data, error } = useLoad(api.quality)
   if (!data) return <Loading error={error} />
   const q = data as QualityData
@@ -288,21 +290,24 @@ export function Quality() {
     <Stack gap="lg">
       <Text>{t('organiser.quality.intro')}</Text>
       <Card withBorder radius="lg" padding="lg">
-        <Title order={2} size="h4" mb="md">{t('organiser.quality.chart', { n: q.held_out_questions })} (%)</Title>
+        <Title order={2} size="h4" mb="md">{t('organiser.quality.chart', { n: q.held_out_questions })}</Title>
+        {/* Horizontal bars: the check names stay level and readable instead of slanted axis labels. */}
         <BarChart
-          h={320}
+          h={400}
           data={rows}
           dataKey="metric"
+          orientation="vertical"
           withLegend
           legendProps={{ verticalAlign: 'bottom' }}
-          yAxisProps={{ domain: [0, 100] }}
+          xAxisProps={{ domain: [0, 100] }}
+          yAxisProps={{ width: 200, interval: 0 }}
           valueFormatter={(v) => `${v}%`}
-          barProps={{ maxBarSize: 34, radius: 4 }}
+          barProps={{ maxBarSize: 16, radius: 4 }}
+          gridAxis="x"
           series={[
-            { name: 'plain', label: t('organiser.quality.plain'), color: 'gray.5' },
             { name: 'ours', label: t('organiser.quality.ours'), color: 'teal.7' },
+            { name: 'plain', label: t('organiser.quality.plain'), color: 'gray.5' },
           ]}
-          xAxisProps={{ interval: 0, angle: i18n.language === 'zh' ? 0 : -12, textAnchor: 'end', height: 60 }}
         />
       </Card>
       <Card withBorder radius="lg" padding="lg">

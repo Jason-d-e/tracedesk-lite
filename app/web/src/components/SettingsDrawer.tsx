@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Drawer, SegmentedControl, Slider, Stack, Switch, Text, useMantineColorScheme, type MantineColorScheme } from '@mantine/core'
+import { Drawer, Group, SegmentedControl, Slider, Stack, Switch, Text, useMantineColorScheme, type MantineColorScheme } from '@mantine/core'
 import { usePrefs, type TextSize } from '../prefs'
 
 export default function SettingsDrawer({ opened, onClose }: { opened: boolean; onClose: () => void }) {
@@ -48,10 +48,14 @@ export default function SettingsDrawer({ opened, onClose }: { opened: boolean; o
             value={prefs.rate}
             onChange={(v) => set({ rate: v })}
             label={(v) => `${v.toFixed(2)}×`}
-            marks={[{ value: 0.7, label: t('settings.rateSlow') }, { value: 1.3, label: t('settings.rateFast') }]}
+            marks={[{ value: 0.7 }, { value: 1 }, { value: 1.3 }]}
             aria-labelledby="rate-label"
-            mb="md"
           />
+          {/* End labels sit under the slider, inside the drawer's padding (slider mark labels overflow it). */}
+          <Group justify="space-between" aria-hidden>
+            <Text size="xs" c="dimmed">{t('settings.rateSlow')}</Text>
+            <Text size="xs" c="dimmed">{t('settings.rateFast')}</Text>
+          </Group>
         </Stack>
 
         <Stack gap={6}>
