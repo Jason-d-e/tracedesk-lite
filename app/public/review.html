@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Organiser review · TraceDesk Lite</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#queue">Skip to the review queue</a>
+
+  <header class="top">
+    <div class="wrap top-inner">
+      <div>
+        <h1>Organiser review</h1>
+        <p class="tagline">What readers reported, and what the documents are missing.</p>
+      </div>
+      <p><a class="btn" href="/">← Back to the help desk</a></p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <p class="demo-note">
+      <strong>Local prototype.</strong> This page has no login and only runs on this computer. Reports are stored in
+      <code>app/data-runtime/reviews.json</code>.
+    </p>
+
+    <section id="queue" class="card" aria-labelledby="queue-heading">
+      <div class="queue-head">
+        <h2 id="queue-heading">Review queue</h2>
+        <a id="export" class="btn btn-small" href="/api/reviews.csv" download>Export CSV</a>
+      </div>
+      <div class="tabs" role="group" aria-label="Show">
+        <button type="button" class="toggle" data-status="pending" aria-pressed="true">To review <span id="count-pending"></span></button>
+        <button type="button" class="toggle" data-status="reviewed" aria-pressed="false">Done <span id="count-reviewed"></span></button>
+        <button type="button" class="toggle" data-status="" aria-pressed="false">All</button>
+      </div>
+      <div id="list" class="review-list" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <script src="review.js" type="module"></script>
+</body>
+</html>

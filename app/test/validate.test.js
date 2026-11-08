@@ -69,6 +69,24 @@ test("deadline check compares the numbers, across languages", () => {
   assert.equal(deadlineSupported("before the event", quote), null);
 });
 
+test("deadline check reads month names, number words and the section's year (bugs found in dev eval)", () => {
+  const event = kb.chunkById.get("D01#event").text;
+  // Month written as a word in the source: 12 November → month 11 (day ≠ month).
+  assert.equal(deadlineSupported("2026年11月12日 19:00 MYT", "takes place on 12 November 2026 from 19:00 to 20:30 MYT"), true);
+  assert.equal(deadlineSupported("2026-11-12 19:00 MYT", "takes place on 12 November 2026 from 19:00 to 20:30 MYT"), true);
+  assert.equal(deadlineSupported("2026年10月12日 19:00 MYT", "takes place on 12 November 2026 from 19:00 to 20:30 MYT"), false, "wrong month must fail");
+  // Number words.
+  assert.equal(deadlineSupported("每小时最多3次", "At most three password-reset requests are allowed in one hour."), true);
+  assert.equal(deadlineSupported("每小时最多4次", "At most three password-reset requests are allowed in one hour."), false);
+  // Year stated once in the section, not in the quoted sentence.
+  const reg = kb.chunkById.get("D01#registration").text;
+  assert.equal(deadlineSupported("2026年11月11日 20:00 MYT", "A confirmation email is sent by 11 November at 20:00 MYT.", reg), true);
+  assert.equal(deadlineSupported("2025年11月11日 20:00 MYT", "A confirmation email is sent by 11 November at 20:00 MYT.", reg), false, "wrong year must fail");
+  // The verb "may" is not a month.
+  assert.equal(deadlineSupported("5 April", "You may cancel on 4 April."), false);
+  assert.ok(event.includes("12 November 2026"));
+});
+
 const base = { key_point: "", answer: "", next_steps: [], citations: [], missing_info: "", clarifying_question: "" };
 const cancelStep = {
   action: "Reply to the confirmation email",

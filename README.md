@@ -36,6 +36,11 @@ An AI summary could help, but a fluent summary that invents or shifts a deadline
 - **Current documents only.** Superseded drafts are listed but never sent to the model.
 - **Prompt-injection aware.** Hidden instructions such as “ignore the documents” or “invent a phone number” are not followed, and any genuine question in the same message is still answered.
 
+### For organisers: close the loop
+
+- **Report a problem.** Readers can flag an answer, or ask the organisers to add missing information. They choose a reason and can add a short optional note. Nothing is saved unless they tick a consent box, and the form asks them not to include personal details.
+- **Review queue** (`/review.html`). Organisers see what was reported, together with the answer that was given, its sources, and the model and prompt versions behind it. They can mark each item done with a note and export the queue as a CSV file. The export opens correctly in Excel (UTF-8, formula-safe).
+
 The design follows the W3C guidance *Making Content Usable for People with Cognitive and Learning Disabilities* (COGA), with WCAG 2.2 AA as the baseline. The app is **not a medical tool**: it never asks about, and does not record, any health information.
 
 ## How it works
@@ -65,6 +70,7 @@ browser (public/)  ──POST /api/ask──►  server.js (Express)
 | Median / max response time | 3.1 s / 6.1 s |
 | Total cost of all 15 calls | about US$0.009 |
 | Automated accessibility check (axe-core 4.10.2, WCAG 2.2 A/AA rules) | 0 violations, in both normal and focus mode |
+| 40-question comparison (promptfoo): plain prompt vs TraceDesk prompt. Same model, documents, schema and server checks. | On the held-out 20 questions, all automatic checks passed for **19/20** with the TraceDesk prompt vs **15/20** with the plain prompt. The difference is checklist deadlines: the plain prompt attached deadlines the quoted text did not state. The TraceDesk prompt costs about 35% more per question and is about 1.6 s slower (median). Automatic checks only, so this is not an accuracy figure. |
 
 ## Run it locally (Windows, macOS or Linux)
 
@@ -80,7 +86,7 @@ npm start                     # then open http://localhost:3000
 
 | Command | What it does |
 | --- | --- |
-| `npm test` | Runs 18 offline tests for knowledge loading, quote and deadline checks, and withholding. No API calls. |
+| `npm test` | Runs 23 offline tests: knowledge loading, quote and deadline checks, withholding, and the review queue with its CSV export. No API calls. |
 | `npm run smoke` | Makes real model calls on the 7 demo questions in `app/scripts/smoke-cases.json`. |
 | `npm run smoke -- TD-018 TD-029` | Runs only the cases you name. |
 
@@ -105,4 +111,4 @@ npm start                     # then open http://localhost:3000
 - **The quote check has limits.** It proves the quoted text exists in the source. It does not prove the quote fully supports the sentence, which still needs human review. The deadline check compares numbers only.
 - **Small fictional demo.** The demo has four short fictional documents. Results on it say nothing about accuracy on real material.
 - **Read-aloud depends on the browser.** The voices available depend on the browser and operating system.
-- **Single-user local prototype.** There are no accounts, the rate limit is in memory, and there is no public deployment.
+- **Single-user local prototype.** There are no accounts, the rate limit is in memory, and there is no public deployment. The organiser page has no login, which is acceptable only because the server listens on this computer alone (127.0.0.1).

@@ -203,6 +203,28 @@ details.more { margin-top: 14px; border-top: 1px solid var(--border); padding-to
 details.more summary { cursor: pointer; font-weight: 600; min-height: 28px; }
 b.vide { font-weight: 750; }
 
+/* ---------- report a problem / organiser review ---------- */
+
+.report { margin-top: 14px; }
+.btn-quiet { background: transparent; color: var(--muted); border-style: dashed; }
+.report-form { display: grid; gap: 6px; border: 1px dashed var(--border); border-radius: 8px; padding: 12px; }
+.report-form select { font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px; min-height: 40px; }
+.report-form textarea { margin-bottom: 4px; }
+.consent { display: flex; gap: 8px; align-items: flex-start; margin-top: 4px; }
+.consent input { width: 20px; height: 20px; margin-top: 3px; flex: none; accent-color: var(--accent); }
+.report-done { color: var(--ok-text); background: var(--ok-bg); border-radius: 8px; padding: 8px 12px; margin: 0; }
+.foot a { color: var(--accent); }
+
+.queue-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.review-item { border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; background: var(--bg); display: grid; gap: 6px; }
+.review-list { display: grid; gap: 12px; margin-top: 14px; }
+.review-q { font-weight: 650; font-size: 1.05rem; margin: 0; }
+.review-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.88rem; }
+.review-actions { display: grid; gap: 6px; }
+.review-actions textarea { min-height: 2.5em; }
+.empty { color: var(--muted); }
+
 /* ---------- focus mode: one thing on screen, bigger and calmer ---------- */
 
 body.focus { font-size: 1.12rem; line-height: 1.8; }

@@ -46,17 +46,42 @@ export function verifyCitation(citation, chunkById) {
   return { ...base, ...details, verified: true, reason: null, span: findSpan(chunk.text, citation.quote) };
 }
 
+const MONTHS = {
+  january: 1, february: 2, march: 3, april: 4, may: 5, june: 6, july: 7, august: 8,
+  september: 9, october: 10, november: 11, december: 12,
+  jan: 1, feb: 2, mar: 3, apr: 4, jun: 6, jul: 7, aug: 8, sep: 9, sept: 9, oct: 10, nov: 11, dec: 12,
+};
+const NUMBER_WORDS = {
+  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
+  eleven: 11, twelve: 12, fifteen: 15, twenty: 20, thirty: 30,
+};
+const MONTH_RE = Object.keys(MONTHS).join("|");
+
+/** Every number a sentence states: digits, number words ("three"), and month names next to a day ("12 November"). */
+export function numbersIn(text) {
+  const t = String(text).toLowerCase();
+  const found = new Set((t.match(/\d+/g) ?? []).map((n) => String(Number(n))));
+  for (const w of t.match(/[a-z]+/g) ?? []) if (w in NUMBER_WORDS) found.add(String(NUMBER_WORDS[w]));
+  // Month names count only beside a day number, so the verb "may" is never read as May.
+  for (const m of t.matchAll(new RegExp(`\\b\\d{1,2}\\s+(${MONTH_RE})\\b|\\b(${MONTH_RE})\\s+\\d{1,2}\\b`, "g"))) {
+    found.add(String(MONTHS[m[1] ?? m[2]]));
+  }
+  return found;
+}
+
 /**
- * A deadline is "supported" when every number in it (day, year, hour, minute)
- * also appears in the step's verified quote. This catches invented or shifted
- * dates even when the deadline is written in another language
- * ("2026年11月11日 18:00" vs "11 November 2026 at 18:00").
+ * A deadline is "supported" when every number in it (day, month, year, hour, minute)
+ * is stated in the step's verified quote. This catches invented or shifted dates even
+ * when the deadline is written in another language ("2026年11月12日 19:00" vs
+ * "12 November 2026 ... 19:00"). A 4-digit year may also come from the same source
+ * section, because documents often state the year once.
  */
-export function deadlineSupported(deadline, quote) {
+export function deadlineSupported(deadline, quote, sourceText = "") {
   const wanted = String(deadline).match(/\d+/g);
   if (!wanted) return null; // no numbers to check (e.g. "before the event")
-  const have = new Set((String(quote).match(/\d+/g) ?? []).map((n) => String(Number(n))));
-  return wanted.every((n) => have.has(String(Number(n))));
+  const have = numbersIn(quote);
+  const years = new Set(String(sourceText).match(/\b20\d\d\b/g) ?? []);
+  return wanted.every((n) => have.has(String(Number(n))) || (n.length === 4 && years.has(n)));
 }
 
 function assertShape(parsed) {
@@ -109,7 +134,7 @@ export function checkResult(parsed, chunkById) {
       return {
         action: s.action.trim(),
         deadline,
-        deadline_supported: deadline ? (checked.verified ? deadlineSupported(deadline, s.quote) : false) : null,
+        deadline_supported: deadline ? (checked.verified ? deadlineSupported(deadline, s.quote, checked.source_text) : false) : null,
         ...checked,
       };
     });

@@ -10,6 +10,8 @@ TraceDesk Lite reuses existing open-source work wherever it can. This file lists
 | [express](https://github.com/expressjs/express) | 5.3.0 | MIT | the Express contributors | HTTP server |
 | [easy-speech](https://github.com/leaonline/easy-speech) | 2.4.0 | MIT | (c) 2021 Jan Küster | Cross-browser read-aloud on top of the Web Speech API |
 | [text-vide](https://github.com/Gumball12/text-vide) | 1.8.6 | MIT | (c) 2022 shj | Optional "bold word starts" reading aid |
+| [lowdb](https://github.com/typicode/lowdb) | 7.0.1 | MIT | (c) typicode | Stores the organiser review queue in a local JSON file |
+| [csv-stringify](https://github.com/adaltas/node-csv) | 6.9.0 | MIT | (c) Adaltas | CSV export of the review queue (escaping commas, quotes, line breaks) |
 
 Each package's full license text ships inside `app/node_modules/<package>/`. The browser modules are served unmodified from those files.
 

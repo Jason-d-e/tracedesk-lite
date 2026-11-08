@@ -3,4 +3,5 @@
 .env.*
 !.env.example
 app/logs/
+app/data-runtime/
 *.log

@@ -357,6 +357,8 @@ function renderResult(payload, data) {
     );
   }
 
+  parts.push(renderReport(payload, data));
+
   const m = data.meta ?? {};
   parts.push(
     el(
@@ -369,6 +371,80 @@ function renderResult(payload, data) {
 
   resultBox.hidden = false;
   resultBox.replaceChildren(...parts);
+}
+
+// ---------- report a problem → organiser review queue ----------
+
+let reasons = {};
+fetch("/api/review-reasons")
+  .then((r) => r.json())
+  .then((data) => (reasons = data))
+  .catch(() => {});
+
+function renderReport(payload, data) {
+  const gap = data.status === "insufficient_evidence";
+  const box = el("div", { class: "report" });
+  const open = el("button", { type: "button", class: "btn btn-small btn-quiet", "aria-expanded": "false" },
+    gap ? "Ask the organisers to add this" : "Report a problem");
+
+  open.addEventListener("click", () => {
+    open.setAttribute("aria-expanded", "true");
+    open.hidden = true;
+    const id = `r-${Date.now()}`;
+    const select = el("select", { id: `${id}-reason`, required: true },
+      el("option", { value: "" }, "Choose a reason…"),
+      Object.entries(reasons).map(([value, label]) => el("option", { value, selected: gap && value === "missing_information" }, label)));
+    const note = el("textarea", { id: `${id}-note`, rows: "2", maxlength: "300" });
+    const consent = el("input", { type: "checkbox", id: `${id}-consent`, required: true });
+    const status = el("p", { class: "hint", "aria-live": "polite" });
+    const form = el(
+      "form",
+      { class: "report-form" },
+      el("label", { class: "label", for: `${id}-reason` }, "What went wrong?"),
+      select,
+      el("label", { class: "label", for: `${id}-note` }, "Anything to add? ", el("span", { class: "hint" }, "(optional — please don't include your name, email or student ID)")),
+      note,
+      el("div", { class: "consent" }, consent, el("label", { for: `${id}-consent` }, "Save my question and this note for the organisers to review.")),
+      el("div", { class: "form-row" }, status, el("button", { type: "submit", class: "btn btn-primary btn-small" }, "Send")),
+    );
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!select.value) return select.focus();
+      if (!consent.checked) {
+        status.textContent = "Please tick the box to agree before sending.";
+        return consent.focus();
+      }
+      status.textContent = "Sending…";
+      const sources = [...new Set([...data.citations, ...data.next_steps].filter((c) => c.verified).map((c) => c.source_id))];
+      try {
+        const res = await fetch("/api/reviews", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            question: payload.question,
+            answer_status: data.status,
+            key_point: data.key_point || data.clarifying_question || "",
+            related_sources: sources,
+            review_reason: select.value,
+            note: note.value,
+            prompt_version: data.meta?.prompt_version,
+            knowledge_version: data.meta?.knowledge_version,
+            model: data.meta?.model_served,
+          }),
+        });
+        const body = await res.json();
+        if (!res.ok) throw new Error(body.error?.message ?? "Could not send.");
+        box.replaceChildren(el("p", { class: "report-done", role: "status" }, "✓ Sent to the organisers for review. Thank you."));
+      } catch (err) {
+        status.textContent = `${err.message} Try again.`;
+      }
+    });
+    box.append(form);
+    select.focus();
+  });
+
+  box.append(open);
+  return box;
 }
 
 // ---------- wiring ----------

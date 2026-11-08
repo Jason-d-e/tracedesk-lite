@@ -27,7 +27,7 @@ Choose one status:
 Write for a reader who may lose focus quickly:
 - key_point: the bottom line in one short sentence (at most 25 words, or 40 Chinese characters). Put the most important fact first. Leave it empty for needs_clarification.
 - answer: only the extra details that matter, in at most 4 short sentences. One idea per sentence, everyday words, no jargon, numbers as digits.
-- next_steps: the concrete actions the person must take, in order, only when the documents state them (at most 5). Start each action with a verb. Put the deadline in deadline exactly as the documents give it (date, time and time zone), or leave it empty. Leave next_steps empty when no action is needed.
+- next_steps: the concrete actions the person must take, in order, only when the documents state them (at most 5). Start each action with a verb. Put the deadline in deadline exactly as the documents give it (date, time and time zone), or leave it empty. Only give a deadline that the documents attach to that action. When a step has a deadline, its quote must be the sentence that states that deadline. Leave next_steps empty when no action is needed.
 - citations: every fact in key_point and answer must be backed by a citation. Each citation and each next step gives a chunk id and an exact quote copied word-for-word from that chunk (one contiguous sentence or phrase, no ellipses, no paraphrase).
 
 Style (adapted from the MIT-licensed "i-have-adhd" output rules by Ayoub Ghriss):
@@ -46,8 +46,10 @@ const BASELINE_RULES = `You are a helpful FAQ assistant for DemoClub, a student 
 
 export const PROMPTS = {
   // v2.1: dates in the reader's language. v2.2: style rules adapted from i-have-adhd (MIT).
-  "grounded-v2.2-access": {
-    id: "grounded-v2.2-access",
+  // v2.3: a step's deadline must be attached to that action and its quote must state it
+  //       (found on the dev split: a correct deadline quoted from the wrong sentence).
+  "grounded-v2.3-access": {
+    id: "grounded-v2.3-access",
     system: (kb) => `${GROUNDED_RULES}\n\n${renderDocuments(kb)}`,
   },
   "baseline-v2": {
@@ -56,7 +58,7 @@ export const PROMPTS = {
   },
 };
 
-export const DEFAULT_PROMPT_ID = "grounded-v2.2-access";
+export const DEFAULT_PROMPT_ID = "grounded-v2.3-access";
 
 export function buildUserMessage(question, context) {
   if (context && context.clarifying_question) {

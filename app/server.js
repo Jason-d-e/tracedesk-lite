@@ -5,6 +5,10 @@ import { loadKnowledge } from "./lib/knowledge.js";
 import { PROMPTS, DEFAULT_PROMPT_ID } from "./lib/prompts.js";
 import { answerQuestion, describeError } from "./lib/answer.js";
 import { logRun } from "./lib/runlog.js";
+import {
+  openReviews, normaliseReport, addReview, updateReview, listReviews, reviewsToCsv,
+  ReviewInputError, REVIEW_REASONS,
+} from "./lib/reviews.js";
 
 const MAX_QUESTION_CHARS = 500;
 const RATE_LIMIT = { windowMs: 60_000, max: 20 };
@@ -120,6 +124,50 @@ app.post("/api/ask", rateLimit, async (req, res) => {
     if (info.code === "internal") console.error(err);
     res.status(info.http).json({ error: { code: info.code, retryable: info.retryable, message: info.message } });
   }
+});
+
+// ---------- review queue (reader reports → organiser review → CSV) ----------
+// Local prototype: organiser routes have no login; the server only listens on 127.0.0.1.
+
+const validSourceIds = new Set(kb.activeChunks.map((c) => c.id));
+
+app.get("/api/review-reasons", (req, res) => res.json(REVIEW_REASONS));
+
+app.post("/api/reviews", rateLimit, async (req, res) => {
+  try {
+    const report = normaliseReport(req.body, validSourceIds);
+    const item = await addReview(await openReviews(), report);
+    res.status(201).json({ id: item.id, review_status: item.review_status });
+  } catch (err) {
+    if (err instanceof ReviewInputError) return badRequest(res, err.message);
+    throw err;
+  }
+});
+
+app.get("/api/reviews", async (req, res) => {
+  const db = await openReviews();
+  const all = listReviews(db);
+  res.json({
+    counts: { pending: all.filter((r) => r.review_status === "pending").length, reviewed: all.filter((r) => r.review_status === "reviewed").length },
+    reviews: listReviews(db, req.query.status),
+  });
+});
+
+app.patch("/api/reviews/:id", async (req, res) => {
+  try {
+    const item = await updateReview(await openReviews(), req.params.id, req.body);
+    if (!item) return res.status(404).json({ error: { code: "not_found", retryable: false, message: "No such review item." } });
+    res.json(item);
+  } catch (err) {
+    if (err instanceof ReviewInputError) return badRequest(res, err.message);
+    throw err;
+  }
+});
+
+app.get("/api/reviews.csv", async (req, res) => {
+  const csv = reviewsToCsv(listReviews(await openReviews(), req.query.status));
+  const date = new Date().toISOString().slice(0, 10);
+  res.type("text/csv; charset=utf-8").attachment(`tracedesk-review-queue-${date}.csv`).send(csv);
 });
 
 // Malformed or oversized request bodies: answer in JSON without leaking stack traces.
