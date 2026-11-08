@@ -1,0 +1,20 @@
+{
+  "note": "Held-out split (20 questions) of the 40-question comparison, 2026-11-09. Automatic checks only; not an accuracy figure.",
+  "run_date": "2026-11-09",
+  "prompt_version": "grounded-v2.4-access",
+  "held_out_questions": 20,
+  "metrics": {
+    "status_correct": { "plain": 20, "ours": 20, "n": 20 },
+    "quotes_verified": { "plain": 20, "ours": 20, "n": 20 },
+    "required_sources": { "plain": 14, "ours": 14, "n": 14 },
+    "deadlines_supported": { "plain": 17, "ours": 20, "n": 20 },
+    "bottom_line_first": { "plain": 18, "ours": 18, "n": 18 },
+    "all_passed": { "plain": 17, "ours": 20, "n": 20 }
+  },
+  "runs": [
+    { "prompt": "grounded-v2.3-access", "plain": 15, "ours": 19, "n": 20 },
+    { "prompt": "grounded-v2.4-access", "plain": 17, "ours": 20, "n": 20 }
+  ],
+  "cost_per_question_usd": { "plain": 0.00047, "ours": 0.00067 },
+  "median_latency_s": { "plain": 2.6, "ours": 4.2 }
+}

@@ -1,0 +1,31 @@
+/* Focus mode: keep only the question and the answer, calmer and larger. */
+body.focus-mode .hide-in-focus {
+  display: none !important;
+}
+body.focus-mode .answer-card {
+  border-width: 2px;
+}
+body.focus-mode * {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Bold word starts (text-vide). */
+b.vide {
+  font-weight: 750;
+}
+
+/* Comfortable reading measure for answer text. */
+.measure {
+  max-width: 68ch;
+}
+
+/* Long English source text inside cards should wrap, never overflow on phones. */
+.wrap-anywhere {
+  overflow-wrap: anywhere;
+}
+
+.step-done .step-action {
+  text-decoration: line-through;
+  opacity: 0.6;
+}

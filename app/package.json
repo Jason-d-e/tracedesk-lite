@@ -15,9 +15,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "1.6.0",
     "csv-stringify": "6.9.0",
-    "easy-speech": "2.4.0",
     "express": "5.3.0",
-    "lowdb": "7.0.1",
-    "text-vide": "1.8.6"
+    "lowdb": "7.0.1"
   }
 }

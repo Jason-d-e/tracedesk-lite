@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import express from "express";
 import { APP_DIR, config, modelConfigured } from "./lib/config.js";
@@ -18,17 +19,14 @@ const kb = loadKnowledge();
 const app = express();
 app.disable("x-powered-by");
 app.use(express.json({ limit: "8kb" }));
-app.use(express.static(path.join(APP_DIR, "public")));
+// The interface is a React app (app/web) built into app/web/dist. A built copy is kept
+// in the repository so `npm start` works without a build step.
+const WEB_DIST = path.join(APP_DIR, "web", "dist");
+app.use(express.static(WEB_DIST));
 
-// Reused open-source browser modules (see THIRD_PARTY_NOTICES.md), served straight from node_modules.
-const VENDOR = {
-  "easy-speech.js": "node_modules/easy-speech/dist/EasySpeech.js",
-  "text-vide.mjs": "node_modules/text-vide/dist/index.mjs",
-};
-app.get("/vendor/:file", (req, res, next) => {
-  const rel = VENDOR[req.params.file];
-  if (!rel) return next();
-  res.type("text/javascript").sendFile(path.join(APP_DIR, rel));
+// Aggregate evaluation results shown on the dashboard's "Answer quality" page.
+app.get("/api/quality", (req, res) => {
+  res.type("application/json").send(fs.readFileSync(path.join(APP_DIR, "quality.json"), "utf8"));
 });
 
 // Small in-memory limiter so a shared demo cannot run up the API bill.

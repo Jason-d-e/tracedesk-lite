@@ -2,18 +2,31 @@
 
 TraceDesk Lite reuses existing open-source work wherever it can. This file lists every component used, as of 2026-11-09.
 
-## Runtime dependencies (installed through npm, exact versions)
+## Server dependencies (`app/package.json`, exact versions)
 
 | Component | Version | License | Copyright | Used for |
 | --- | --- | --- | --- | --- |
 | [@anthropic-ai/sdk](https://github.com/anthropics/anthropic-sdk-typescript) | 1.6.0 | Apache-2.0 | Anthropic | Calling the Claude API |
 | [express](https://github.com/expressjs/express) | 5.3.0 | MIT | the Express contributors | HTTP server |
-| [easy-speech](https://github.com/leaonline/easy-speech) | 2.4.0 | MIT | (c) 2021 Jan Küster | Cross-browser read-aloud on top of the Web Speech API |
-| [text-vide](https://github.com/Gumball12/text-vide) | 1.8.6 | MIT | (c) 2022 shj | Optional "bold word starts" reading aid |
 | [lowdb](https://github.com/typicode/lowdb) | 7.0.1 | MIT | (c) typicode | Stores the organiser review queue in a local JSON file |
 | [csv-stringify](https://github.com/adaltas/node-csv) | 6.9.0 | MIT | (c) Adaltas | CSV export of the review queue (escaping commas, quotes, line breaks) |
 
-Each package's full license text ships inside `app/node_modules/<package>/`. The browser modules are served unmodified from those files.
+## Interface dependencies (`app/web/package.json`, bundled into `app/web/dist`)
+
+| Component | Version | License | Copyright | Used for |
+| --- | --- | --- | --- | --- |
+| [React](https://github.com/facebook/react) and react-dom | 19.3.1 | MIT | (c) Meta Platforms, Inc. and affiliates | Interface framework |
+| [Mantine](https://github.com/mantinedev/mantine): core, hooks, charts, notifications | 9.7.5 | MIT | (c) 2021 Vitaly Rtishchev | Accessible components: layout, tabs, drawer, modal, accordion, checklist, tables, notifications, charts |
+| [Recharts](https://github.com/recharts/recharts) | 3.10.1 | MIT | (c) 2015-present recharts | Chart engine behind the dashboard charts |
+| [Tabler Icons](https://github.com/tabler/tabler-icons) (@tabler/icons-react) | 3.51.0 | MIT | (c) 2020-2026 Paweł Kuna | Icons; the favicon uses its "shield-check" icon |
+| [i18next](https://github.com/i18next/i18next) | 27.0.1 | MIT | (c) 2011-present i18next | Chinese / English interface text |
+| [react-i18next](https://github.com/i18next/react-i18next) | 18.0.1 | MIT | (c) 2015-present i18next | Connects i18next to React |
+| [easy-speech](https://github.com/leaonline/easy-speech) | 2.4.0 | MIT | (c) 2021 Jan Küster | Cross-browser read-aloud on top of the Web Speech API |
+| [text-vide](https://github.com/Gumball12/text-vide) | 1.8.6 | MIT | (c) 2022 shj | Optional "bold word starts" reading aid |
+
+Build tools (not shipped in the bundle): [Vite](https://github.com/vitejs/vite) 8.3.6 (MIT) with @vitejs/plugin-react (MIT), [TypeScript](https://github.com/microsoft/TypeScript) 7.0.2 (Apache-2.0), postcss-preset-mantine 1.18.0 and postcss-simple-vars 7.0.1 (MIT). The interface started from Vite's official `react-ts` template.
+
+Each package's full license text ships inside `node_modules/<package>/` after `npm install`.
 
 ## Adapted text
 

@@ -4,7 +4,7 @@
 
 TraceDesk Lite is a help-desk assistant for student organisations, designed for readers who find long, dense text hard to act on. That includes people with ADHD or other attention, reading or executive-function difficulties, and people reading English as a second language. It answers only from the organisation's current documents. Every sentence and every checklist step must quote those documents, and the server checks each quote word for word before anything is shown.
 
-> Status: working prototype, v0.1 (November 2026). The demo uses a **fictional** club called “DemoClub”. Its documents are not a real service or policy.
+> Status: working prototype, v0.3 (November 2026). The demo uses a **fictional** club called “DemoClub”. Its documents are not a real service or policy.
 
 ## The problem
 
@@ -16,43 +16,66 @@ Practical student information (deadlines, eligibility, how to cancel, who to con
 
 An AI summary could help, but a fluent summary that invents or shifts a deadline does the most harm to exactly the people who rely on it. TraceDesk's rule is: **read less, but never be misled.**
 
-## What it does
+## The reader's side: the help desk (`/`)
 
-- **Bottom line first.** Each answer opens with one short sentence. Details stay folded under “More detail”.
-- **A checklist you can tick.** When the documents say something needs doing, the answer becomes numbered steps.
-  - Each step starts with a verb and shows its deadline as a highlighted ⏰ label.
-  - You can tick steps off or copy the whole list.
-  - Each step carries its own source quote.
-- **Deadlines are double-checked.** Every number in a step's deadline (day, year, hour, minute) must also appear in that step's verified quote. This works even when the answer is in Chinese and the source is in English. A deadline that fails the check is marked in red.
-- **Focus mode.** One switch hides everything except the question and the answer, enlarges the text, widens line spacing and stops animations. The setting is remembered in the browser.
-- **Listen.** Reads the bottom line and the steps aloud with the browser's own voices. This is free and makes no extra model call.
-- **Bold word starts (optional).** Bolds the beginning of each English word. Some readers find this easier to follow, and evidence for it is mixed, so it is off by default.
-- **Ask in any language.** The answer comes back in the language of the question. Source quotes stay in the original English, so readers can check them.
-- **Honest outcomes.** The assistant does one of three things:
-  - answers from the documents;
-  - says “not in the documents” and gives the documented contact;
-  - asks one short question back when a request is ambiguous, for example “that link” when two different links exist.
+**One language at a time.** A 中文 / EN switch changes every label, button, hint and example question, and the choice is remembered. The answer comes back in the language of the question. The only English that stays in the Chinese interface is the source quotes, and they are labelled “English, not translated” so readers know why.
+
+**Questions grouped by topic.** Instead of a wall of examples, suggested questions sit under five tabs: dates and times, registering and cancelling, who can join, help and contact, and “try a tricky one” (vague, unanswerable or manipulative questions that show the assistant will not guess).
+
+**Every answer has the same numbered layout**, so readers always know where to look:
+
+1. **Status banner.** An icon, a title and one sentence: “Found in the official documents”, “The documents don’t cover this”, “One quick question first” or “Answer held back”.
+2. **① The bottom line.** One short sentence in large text, with a Listen button.
+3. **② What you need to do.** A checklist you can tick.
+   - Each step starts with a verb and shows its deadline in a highlighted label that never gets cut off on a phone.
+   - Each step names the document it comes from, and the whole list can be copied in one click.
+   - **Deadlines are double-checked.** Every number in a step's deadline (day, year, hour, minute) must also appear in that step's verified quote, even when the answer is in Chinese and the source in English. A deadline that fails is shown in red with a warning.
+4. **③ More detail**, folded by default.
+5. **④ Evidence.** Quotes grouped by document, highlighted inside the original paragraph, with a “Quotes verified 3/3” badge.
+6. **Report a problem** or **ask the organisers to add this**.
+
+**Reading settings** (one drawer, remembered in the browser):
+
+- **Focus mode** hides everything except the question and the answer and stops animations.
+- **Text size**: standard, large or extra large.
+- **Bold word starts** for English text. Some readers find this easier to follow; the evidence is mixed, so it is off by default.
+- **Reading speed** for Listen, which uses the browser's own voices at no extra cost.
+- **Colour scheme**: follow the device, light or dark.
+
+**Recent questions** stay in a side panel for the current browser tab, so an answer is not lost after a second question. Opening the dashboard and coming back keeps them too.
+
+**Honest outcomes.**
+
 - **Nothing unverified is shown as fact.** If none of an answer's quotes match the source, the answer is withheld.
 - **Current documents only.** Superseded drafts are listed but never sent to the model.
 - **Prompt-injection aware.** Hidden instructions such as “ignore the documents” or “invent a phone number” are not followed, and any genuine question in the same message is still answered.
 
-### For organisers: close the loop
+## The organiser's side: the dashboard (`/#/organiser`)
 
-- **Report a problem.** Readers can flag an answer, or ask the organisers to add missing information. They choose a reason and can add a short optional note. Nothing is saved unless they tick a consent box, and the form asks them not to include personal details.
-- **Review queue** (`/review.html`). Organisers see what was reported, together with the answer that was given, its sources, and the model and prompt versions behind it. They can mark each item done with a note and export the queue as a CSV file. The export opens correctly in Excel (UTF-8, formula-safe).
-- **What the documents are missing.** The same page counts how many real reader questions the documents could not answer and groups repeated questions. Items readers explicitly asked to be added are ranked first, so organisers know what to write next.
+Five sections in a side menu (a menu button on phones):
+
+| Section | What organisers see and do |
+| --- | --- |
+| **Overview** | Questions asked, share answered from the documents, share not covered, open reports; a chart of outcomes and a chart of the most-needed missing information. |
+| **Reader reports** | Each report with the answer that was given, its sources and the reader's note. Filter by pending / done, write how it was resolved, mark it done or reopen it, and export everything as a CSV file that opens correctly in Excel (UTF-8, formula-safe). |
+| **Knowledge gaps** | Questions the documents could not answer, grouped and counted. Items readers explicitly asked to be added are ranked first, so organisers know what to write next. Only questions typed into the help desk are counted, not tests. |
+| **Documents** | Every document with its ID, version, status and effective date. Superseded drafts show which document replaced them. |
+| **Answer quality** | The prompt comparison below as a chart and a table, with its limits stated next to it. |
+
+Readers' reports are saved only if they tick a consent box, and the form asks them not to include personal details.
 
 The design follows the W3C guidance *Making Content Usable for People with Cognitive and Learning Disabilities* (COGA), with WCAG 2.2 AA as the baseline. The app is **not a medical tool**: it never asks about, and does not record, any health information.
 
 ## How it works
 
 ```
-browser (public/)  ──POST /api/ask──►  server.js (Express)
-                                         ├─ lib/knowledge.js  load data/knowledge.json, keep active sections only
-                                         ├─ lib/prompts.js    instructions + documents + JSON schema (key_point, next_steps, citations…)
-                                         ├─ lib/answer.js     one Claude API call with structured JSON output
-                                         ├─ lib/validate.js   check every quote and every deadline against the source
-                                         └─ lib/runlog.js     append each run to logs/runs.jsonl
+web/ (React + Mantine, built to web/dist)  ──POST /api/ask──►  server.js (Express)
+                                              ├─ lib/knowledge.js  load data/knowledge.json, keep active sections only
+                                              ├─ lib/prompts.js    instructions + documents + JSON schema (key_point, next_steps, citations…)
+                                              ├─ lib/answer.js     one Claude API call with structured JSON output
+                                              ├─ lib/validate.js   check every quote and every deadline against the source
+                                              ├─ lib/runlog.js     append each run to logs/runs.jsonl
+                                              └─ lib/reviews.js, lib/insights.js   reader reports and knowledge gaps
 ```
 
 - **Model call.** The server makes one Messages API call through the official Anthropic SDK. The model is `claude-haiku-5-5`, the cheapest current Claude model, at effort `medium`.
@@ -60,18 +83,19 @@ browser (public/)  ──POST /api/ask──►  server.js (Express)
 - **No retrieval layer.** The knowledge base is small, so all active sections go into the prompt; there is no vector search.
 - **Key handling.** The API key is read only from `app/.env`, never from system environment variables, and is never sent to the browser.
 - **Logging.** Every run records the model, prompt version, knowledge version, latency, token usage and verification results.
+- **Interface.** A single-page React app. Every piece of interface text lives in two language files (`web/src/locales/en.ts`, `zh.ts`); none is written into the components. The dashboard and its charts are only downloaded when an organiser opens it.
 
 ## Measured so far (real model runs, 2026-11-09)
 
 | What | Result |
 | --- | --- |
-| Real model calls | 110, all successful: 20 smoke-test calls, 8 questions typed into the app and 82 evaluation calls. These are demo questions only, so this is not an accuracy evaluation. |
-| Quotes and steps that failed verification | 0 across all 110 calls |
+| Real model calls | 172, all successful: 20 smoke-test calls, 30 questions typed into the app and 122 evaluation calls. These are demo questions only, so this is not an accuracy evaluation. |
+| Quotes and steps that failed verification | 0 across all 172 calls |
 | Expected outcome matched (smoke cases TD-001, 018, 021, 029, 033, 037, 040) | 7 of 7 |
-| Median / max response time | 2.6 s / 6.2 s |
-| Total cost of all 110 calls | about US$0.06 |
-| Automated accessibility check (axe-core 4.10.2, WCAG 2.2 A/AA rules) | 0 violations, in both normal and focus mode |
-| 40-question comparison (promptfoo): plain prompt vs TraceDesk prompt. Same model, documents, schema and server checks. | On the held-out 20 questions, all automatic checks passed for **19/20** with the TraceDesk prompt vs **15/20** with the plain prompt. The difference is checklist deadlines: the plain prompt attached deadlines the quoted text did not state. The TraceDesk prompt costs about 35% more per question and is about 1.6 s slower (median). Automatic checks only, so this is not an accuracy figure. The full one-page brief is in `EVALUATION.md`. |
+| Median / max response time | 2.9 s / 6.6 s |
+| Total cost of all 172 calls | about US$0.10 |
+| Automated accessibility check (axe-core 4.10.2, WCAG 2.2 A/AA rules plus best practices) | 0 violations on the help desk with an answer shown and on all five dashboard sections; checked in Chinese and English, light and dark, at desktop and 375 px phone width |
+| 40-question prompt comparison (promptfoo): plain prompt vs TraceDesk prompt, same model, documents, schema and server checks | On the 20 held-out questions, all automatic checks passed for **20/20** with the TraceDesk prompt (v2.4) vs **17/20** with the plain prompt. The earlier run (v2.3) scored 19/20 vs 15/20. The plain prompt scored 15 and then 17 on the same questions, so a gap of a few questions can be run-to-run noise. Every remaining difference is checklist deadlines the quoted text did not state. The TraceDesk prompt costs about 40% more per question and is about 1.6 s slower (median). Automatic checks only, so this is not an accuracy figure. Details: `EVALUATION.md`. |
 
 ## Run it locally (Windows, macOS or Linux)
 
@@ -82,28 +106,39 @@ cd app
 npm install
 copy .env.example .env        # macOS/Linux: cp .env.example .env
 # open .env and paste your key after ANTHROPIC_API_KEY=
-npm start                     # then open http://localhost:3000
+npm start                     # then open http://localhost:3000 (dashboard: http://localhost:3000/#/organiser)
 ```
 
-| Command | What it does |
+The built interface (`app/web/dist`) is included, so no build step is needed to run the app.
+
+| Command (in `app/`) | What it does |
 | --- | --- |
 | `npm test` | Runs 27 offline tests: knowledge loading, quote and deadline checks, withholding, the review queue with its CSV export, and knowledge-gap insights. No API calls. |
 | `npm run smoke` | Makes real model calls on the 7 demo questions in `app/scripts/smoke-cases.json`. |
 | `npm run smoke -- TD-018 TD-029` | Runs only the cases you name. |
+
+To change the interface:
+
+```bash
+cd app/web
+npm install
+npm run dev      # live-reloading interface on http://localhost:5173 (keep `npm start` running in app/ for the API)
+npm run build    # type-check and rebuild app/web/dist
+```
 
 ## What was built when (disclosure)
 
 | Date (MYT) | Work |
 | --- | --- |
 | 2026-11-03 | The fictional DemoClub knowledge base (`data/knowledge.json`) and a set of draft test questions. No application code. |
-| 2026-11-09 onward | Everything in `app/`: the server, quote and deadline verification, the accessibility features, the web interface, the tests and the smoke script. |
+| 2026-11-09 onward | Everything in `app/`: the server, quote and deadline verification, the accessibility features, the tests and the smoke script. The web interface was first written in plain HTML and rebuilt the same day in React with Mantine, after trying it ourselves showed mixed languages, unclear labels and ungrouped examples. |
 
 **AI assistance.** The fictional documents and the draft questions were written with AI help. The application code was written with an AI coding assistant (Claude Code) under the team's direction.
 
-**Reused work.** Reused open-source components and adapted text are listed in `THIRD_PARTY_NOTICES.md` at the repository root:
+**Reused work.** We used existing open-source components wherever one fitted. All are listed with versions and licenses in `THIRD_PARTY_NOTICES.md`:
 
-- Read-aloud uses easy-speech.
-- Bold word starts uses text-vide.
+- Interface: React, Mantine (components, charts, notifications), Recharts, Tabler Icons, i18next, Vite.
+- Read-aloud uses easy-speech; bold word starts uses text-vide.
 - The answer-style rules are adapted from i-have-adhd.
 
 ## Known limitations
@@ -111,5 +146,6 @@ npm start                     # then open http://localhost:3000
 - **No user testing yet.** Nobody with ADHD has tried the app. It is *designed with* cognitive-accessibility guidance; we do not claim it is proven to help.
 - **The quote check has limits.** It proves the quoted text exists in the source. It does not prove the quote fully supports the sentence, which still needs human review. The deadline check compares numbers only.
 - **Small fictional demo.** The demo has four short fictional documents. Results on it say nothing about accuracy on real material.
+- **Automated accessibility checks are not enough.** An automated checker catches only part of the problems. Screen-reader and keyboard-only testing by real users has not been done.
 - **Read-aloud depends on the browser.** The voices available depend on the browser and operating system.
-- **Single-user local prototype.** There are no accounts, the rate limit is in memory, and there is no public deployment. The organiser page has no login, which is acceptable only because the server listens on this computer alone (127.0.0.1).
+- **Single-user local prototype.** There are no accounts, the rate limit is in memory, and there is no public deployment. The dashboard has no login, which is acceptable only because the server listens on this computer alone (127.0.0.1).
