@@ -40,6 +40,7 @@ An AI summary could help, but a fluent summary that invents or shifts a deadline
 
 - **Report a problem.** Readers can flag an answer, or ask the organisers to add missing information. They choose a reason and can add a short optional note. Nothing is saved unless they tick a consent box, and the form asks them not to include personal details.
 - **Review queue** (`/review.html`). Organisers see what was reported, together with the answer that was given, its sources, and the model and prompt versions behind it. They can mark each item done with a note and export the queue as a CSV file. The export opens correctly in Excel (UTF-8, formula-safe).
+- **What the documents are missing.** The same page counts how many real reader questions the documents could not answer and groups repeated questions. Items readers explicitly asked to be added are ranked first, so organisers know what to write next.
 
 The design follows the W3C guidance *Making Content Usable for People with Cognitive and Learning Disabilities* (COGA), with WCAG 2.2 AA as the baseline. The app is **not a medical tool**: it never asks about, and does not record, any health information.
 
@@ -70,7 +71,7 @@ browser (public/)  ──POST /api/ask──►  server.js (Express)
 | Median / max response time | 3.1 s / 6.1 s |
 | Total cost of all 15 calls | about US$0.009 |
 | Automated accessibility check (axe-core 4.10.2, WCAG 2.2 A/AA rules) | 0 violations, in both normal and focus mode |
-| 40-question comparison (promptfoo): plain prompt vs TraceDesk prompt. Same model, documents, schema and server checks. | On the held-out 20 questions, all automatic checks passed for **19/20** with the TraceDesk prompt vs **15/20** with the plain prompt. The difference is checklist deadlines: the plain prompt attached deadlines the quoted text did not state. The TraceDesk prompt costs about 35% more per question and is about 1.6 s slower (median). Automatic checks only, so this is not an accuracy figure. |
+| 40-question comparison (promptfoo): plain prompt vs TraceDesk prompt. Same model, documents, schema and server checks. | On the held-out 20 questions, all automatic checks passed for **19/20** with the TraceDesk prompt vs **15/20** with the plain prompt. The difference is checklist deadlines: the plain prompt attached deadlines the quoted text did not state. The TraceDesk prompt costs about 35% more per question and is about 1.6 s slower (median). Automatic checks only, so this is not an accuracy figure. The full one-page brief is in `EVALUATION.md`. |
 
 ## Run it locally (Windows, macOS or Linux)
 
@@ -86,7 +87,7 @@ npm start                     # then open http://localhost:3000
 
 | Command | What it does |
 | --- | --- |
-| `npm test` | Runs 23 offline tests: knowledge loading, quote and deadline checks, withholding, and the review queue with its CSV export. No API calls. |
+| `npm test` | Runs 27 offline tests: knowledge loading, quote and deadline checks, withholding, the review queue with its CSV export, and knowledge-gap insights. No API calls. |
 | `npm run smoke` | Makes real model calls on the 7 demo questions in `app/scripts/smoke-cases.json`. |
 | `npm run smoke -- TD-018 TD-029` | Runs only the cases you name. |
 

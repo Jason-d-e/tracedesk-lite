@@ -5,6 +5,7 @@ import { loadKnowledge } from "./lib/knowledge.js";
 import { PROMPTS, DEFAULT_PROMPT_ID } from "./lib/prompts.js";
 import { answerQuestion, describeError } from "./lib/answer.js";
 import { logRun } from "./lib/runlog.js";
+import { readRuns, buildInsights } from "./lib/insights.js";
 import {
   openReviews, normaliseReport, addReview, updateReview, listReviews, reviewsToCsv,
   ReviewInputError, REVIEW_REASONS,
@@ -104,6 +105,7 @@ app.post("/api/ask", rateLimit, async (req, res) => {
       context,
       status: result.status,
       model_status: result.model_status,
+      missing_info: result.missing_info,
       checks: result.checks,
       citations: result.citations.map(({ source_id, verified, reason }) => ({ source_id, verified, reason })),
       ...result.meta,
@@ -162,6 +164,11 @@ app.patch("/api/reviews/:id", async (req, res) => {
     if (err instanceof ReviewInputError) return badRequest(res, err.message);
     throw err;
   }
+});
+
+app.get("/api/insights", async (req, res) => {
+  const db = await openReviews();
+  res.json(buildInsights(readRuns(), db.data.reviews));
 });
 
 app.get("/api/reviews.csv", async (req, res) => {

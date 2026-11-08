@@ -224,6 +224,8 @@ b.vide { font-weight: 750; }
 .review-actions { display: grid; gap: 6px; }
 .review-actions textarea { min-height: 2.5em; }
 .empty { color: var(--muted); }
+.gap-list { margin: 8px 0; padding-left: 22px; display: grid; gap: 8px; }
+.gap .chip { font-size: 0.8rem; }
 
 /* ---------- focus mode: one thing on screen, bigger and calmer ---------- */
 

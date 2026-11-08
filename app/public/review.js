@@ -85,6 +85,36 @@ async function load() {
   }
 }
 
+async function loadGaps() {
+  const summary = document.querySelector("#gap-summary");
+  const gaps = document.querySelector("#gaps");
+  try {
+    const d = await (await fetch("/api/insights")).json();
+    const s = d.by_status;
+    summary.textContent = d.questions_answered_by_app
+      ? `${d.questions_answered_by_app} reader questions so far: ${s.answered ?? 0} answered, ${s.insufficient_evidence ?? 0} not in the documents (${Math.round(d.unanswered_share * 100)}%), ${s.needs_clarification ?? 0} needed more detail, ${s.withheld ?? 0} withheld.`
+      : "No reader questions yet.";
+    gaps.replaceChildren(
+      ...d.top_gaps.map((g) =>
+        el(
+          "li",
+          { class: "gap" },
+          el("strong", {}, g.question),
+          " ",
+          g.reported ? el("span", { class: "chip chip-warn" }, `${g.reported} asked to add`) : null,
+          " ",
+          g.asked ? el("span", { class: "chip chip-muted" }, `asked ${g.asked}×`) : null,
+          g.missing_info ? el("div", { class: "hint" }, "Missing: ", g.missing_info) : null,
+          g.reader_notes.length ? el("div", { class: "hint" }, "Reader notes: ", g.reader_notes.slice(0, 2).join(" · ")) : null,
+        ),
+      ),
+    );
+    if (!d.top_gaps.length) gaps.replaceChildren(el("li", { class: "empty" }, "No gaps found yet."));
+  } catch {
+    summary.textContent = "Could not load insights.";
+  }
+}
+
 tabs.forEach((t) =>
   t.addEventListener("click", () => {
     current = t.dataset.status;
@@ -96,4 +126,7 @@ tabs.forEach((t) =>
 fetch("/api/review-reasons")
   .then((r) => r.json())
   .then((d) => (reasons = d))
-  .finally(load);
+  .finally(() => {
+    load();
+    loadGaps();
+  });
