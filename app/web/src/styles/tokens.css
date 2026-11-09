@@ -25,6 +25,8 @@
   --cast-stock: 6px 5px 10px -6px oklch(var(--shade) / 0.3); --cast-stock-lift: 12px 10px 18px -8px oklch(var(--shade) / 0.3);
   --press-groove: inset 1px 1.5px 2px oklch(var(--shade) / 0.16), inset -1px -1px 0 oklch(var(--lit) / 0.9), 0 0 0 0.5px oklch(var(--shade) / 0.2);
   --tracking-display: -0.03em; --display-weight: 600;
+  /* A highlighter pen for key facts in the bottom line: warm, never coral (coral stays the verified ink). */
+  --color-marker: oklch(90% 0.11 90 / 0.85);
 }
 
 /* Dark mode, derived from the theme's own board (never inverted): the board becomes the paper,
@@ -39,4 +41,5 @@
   --color-accent: oklch(74% 0.125 30); --color-accent-2: oklch(74% 0.125 30); --color-focus: oklch(76% 0.14 30); --color-paid: oklch(74% 0.13 33);
   --shade: 2% 0.01 40; --lit: 40% 0.01 60;
   --tex-cotton: none; --tex-desk: none;
+  --color-marker: oklch(44% 0.08 80 / 0.9);
 }

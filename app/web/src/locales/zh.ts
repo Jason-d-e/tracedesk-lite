@@ -60,6 +60,8 @@ const zh: Messages = {
     withheld: { title: '答案已拦下', desc: 'AI 的回答无法和资料逐字对上，所以没有显示。可以换个问法再试。' },
   },
   answer: {
+    keyFacts: '关键信息',
+    factKinds: { date: '日期', time: '时间', place: '地点', contact: '联系方式' },
     youAsked: '你的问题',
     bottomLine: '一句话结论',
     todo: '你需要做的事',

@@ -58,6 +58,8 @@ const en = {
     withheld: { title: 'Answer held back', desc: 'The AI’s answer could not be matched to the documents, so it is not shown. Try asking in a different way.' },
   },
   answer: {
+    keyFacts: 'Key facts',
+    factKinds: { date: 'Date', time: 'Time', place: 'Where', contact: 'Contact' },
     youAsked: 'You asked',
     bottomLine: 'In one sentence',
     todo: 'What to do',

@@ -15,12 +15,14 @@
     "@mantine/hooks": "9.7.5",
     "@mantine/notifications": "9.7.5",
     "@tabler/icons-react": "3.51.0",
+    "chrono-node": "2.10.3",
     "easy-speech": "2.4.0",
     "i18next": "27.0.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-i18next": "18.0.1",
     "recharts": "3.10.1",
+    "rough-notation": "0.5.1",
     "text-vide": "1.8.6"
   },
   "devDependencies": {

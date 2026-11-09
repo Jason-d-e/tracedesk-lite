@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Accordion, Alert, Box, Button, Card, Checkbox, CopyButton, Divider, Group, Highlight, Stack, Text, Textarea,
@@ -11,6 +11,7 @@ import { Readable, speak, stopSpeaking } from '../reading'
 import { usePrefs } from '../prefs'
 import type { AnswerResult, AskPayload, Citation, Status } from '../types'
 import ReportModal from './ReportModal'
+import KeySentence from './KeySentence'
 
 // Status is an ink outline (Coral). Only a verified answer spends the coral, as a pressed stamp.
 const STATUS_ICON: Record<Status, { icon: ReactNode; tone: string }> = {
@@ -117,6 +118,8 @@ export default function AnswerCard({
   const evidence = groupBySource([...result.citations, ...steps])
   const quoteCount = result.citations.length + steps.length
   const verifiedCount = result.checks.citations_verified + result.checks.steps_verified
+  // Only what the server verified word for word may back an emphasised date, time, place or contact.
+  const verifiedQuotes = useMemo(() => [...result.citations, ...steps].filter((c) => c.verified).map((c) => c.quote), [result.citations, steps])
   let n = 0
 
   const checklistText = steps
@@ -160,11 +163,9 @@ export default function AnswerCard({
       {!withheld && bottomLine && (
         <section aria-labelledby="sec-bottom">
           <SectionLabel n={++n} id="sec-bottom">{clarify ? t('answer.clarifyHeading') : t('answer.bottomLine')}</SectionLabel>
-          <Text component="p" fz="1.375rem" fw={600} lh={1.35} className="measure" style={{ letterSpacing: '-0.01em' }}>
-            <Readable text={bottomLine} bionic={prefs.bionic} />
-          </Text>
+          <KeySentence text={bottomLine} sources={verifiedQuotes} />
           <Group mt="sm" gap="xs">
-            <Button variant="light" size="xs" leftSection={speaking ? <IconPlayerStop size={16} /> : <IconVolume size={16} />} onClick={listen}>
+            <Button variant="light" size="sm" leftSection={speaking ? <IconPlayerStop size={16} /> : <IconVolume size={16} />} onClick={listen}>
               {speaking ? t('answer.stop') : t('answer.listen')}
             </Button>
             {speechError && <Text size="xs" c="dimmed">{t('answer.speechUnavailable')}</Text>}
@@ -235,7 +236,7 @@ export default function AnswerCard({
           </div>
           <CopyButton value={checklistText} timeout={2000}>
             {({ copied, copy }) => (
-              <Button mt="xs" size="xs" variant="subtle" leftSection={copied ? <IconCheck size={16} /> : <IconCopy size={16} />} onClick={copy}>
+              <Button mt="xs" size="sm" variant="subtle" leftSection={copied ? <IconCheck size={16} /> : <IconCopy size={16} />} onClick={copy}>
                 {copied ? t('answer.copied') : t('answer.copySteps')}
               </Button>
             )}
@@ -286,13 +287,13 @@ export default function AnswerCard({
         <Group gap="xs">
           <Button
             variant="default"
-            size="xs"
+            size="sm"
             leftSection={result.status === 'insufficient_evidence' ? <IconPlus size={16} /> : <IconFlag size={16} />}
             onClick={() => setReportOpen(true)}
           >
             {result.status === 'insufficient_evidence' ? t('report.askAdd') : t('report.problem')}
           </Button>
-          <Button variant="subtle" size="xs" onClick={onNew}>{t('answer.newQuestion')}</Button>
+          <Button variant="subtle" size="sm" onClick={onNew}>{t('answer.newQuestion')}</Button>
         </Group>
         <Text size="xs" c="dimmed" className="hide-in-focus">
           {t('answer.meta', { model: result.meta.model_served, seconds: (result.meta.latency_ms / 1000).toFixed(1) })}

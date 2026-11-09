@@ -23,6 +23,8 @@ TraceDesk Lite reuses existing open-source work wherever it can. This file lists
 | [react-i18next](https://github.com/i18next/react-i18next) | 18.0.1 | MIT | (c) 2015-present i18next | Connects i18next to React |
 | [easy-speech](https://github.com/leaonline/easy-speech) | 2.4.0 | MIT | (c) 2021 Jan Küster | Cross-browser read-aloud on top of the Web Speech API |
 | [text-vide](https://github.com/Gumball12/text-vide) | 1.8.6 | MIT | (c) 2022 shj | Optional "bold word starts" reading aid |
+| [chrono-node](https://github.com/wanasit/chrono) | 2.10.3 | MIT | (c) 2014 Wanasit Tanakitrungruang | Finds dates and times in the bottom line (English and Chinese) and in the verified quotes, so only backed facts are marked |
+| [Rough Notation](https://github.com/rough-stuff/rough-notation) | 0.5.1 | MIT | (c) 2020 Preet Shihn | The highlighter stroke behind key facts in the bottom line |
 
 ## Fonts (loaded at runtime from their providers, not redistributed)
 

@@ -29,7 +29,7 @@ The first screen says what the product does and lets you try it in one click. A 
 **Every answer has the same numbered layout**, so readers always know where to look:
 
 1. **Status banner.** An icon, a title and one sentence: “Found in the official documents”, “The documents don’t cover this”, “One quick question first” or “Answer held back”.
-2. **① The bottom line.** One short sentence in large text, with a Listen button.
+2. **① The bottom line.** One short sentence in large text, with a Listen button. Its key facts (date, time, place, contact) are marked with a highlighter stroke and repeated underneath as labelled chips, but only when the same values appear in a verified quote; an unbacked date is never emphasised.
 3. **② What you need to do.** A checklist you can tick.
    - Each step starts with a verb and shows its deadline in a highlighted label that never gets cut off on a phone.
    - Each step names the document it comes from, and the whole list can be copied in one click.
@@ -143,7 +143,7 @@ npm run build    # type-check and rebuild app/web/dist
 **Reused work.** We used existing open-source components wherever one fitted. All are listed with versions and licenses in `THIRD_PARTY_NOTICES.md`:
 
 - Interface: React, Mantine (components, charts, notifications), Recharts, Tabler Icons, i18next, Vite.
-- Read-aloud uses easy-speech; bold word starts uses text-vide.
+- Read-aloud uses easy-speech; bold word starts uses text-vide; key facts are found with chrono-node and marked with Rough Notation.
 - The answer-style rules are adapted from i-have-adhd.
 - Design: the visual system is the "Coral" theme of the Hallmark design skill (MIT), chosen from three it offered; motion follows Emil Kowalski's design-engineering skills (MIT); Impeccable's quality rules (Apache-2.0) were used as a final checklist. Fonts: General Sans (Fontshare), Geist Mono and Noto Sans SC (both OFL).
 
