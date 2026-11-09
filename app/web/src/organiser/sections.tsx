@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  Alert, Badge, Button, Card, Center, Group, Loader, Paper, SegmentedControl, SimpleGrid, Stack, Table, Text, Textarea, ThemeIcon, Title,
+  Alert, Badge, Button, Card, Center, Group, Loader, SegmentedControl, SimpleGrid, Stack, Table, Text, Textarea, Title,
 } from '@mantine/core'
 import { BarChart, DonutChart } from '@mantine/charts'
 import { notifications } from '@mantine/notifications'
@@ -12,9 +12,9 @@ import { api } from '../api'
 import type { DocInfo, Insights, Quality as QualityData, ReviewItem, Status } from '../types'
 
 const STATUS_COLOR: Record<Status, string> = {
-  answered: 'teal.6',
-  insufficient_evidence: 'orange.6',
-  needs_clarification: 'blue.6',
+  answered: 'coral.6',
+  insufficient_evidence: 'ink.7',
+  needs_clarification: 'ink.4',
   withheld: 'red.6',
 }
 
@@ -41,16 +41,16 @@ const when = (iso: string, lang: string) => (iso ? new Date(iso).toLocaleString(
 
 function Stat({ label, value, icon, color }: { label: string; value: ReactNode; icon: ReactNode; color: string }) {
   return (
-    <Paper withBorder radius="lg" p="md">
+    <Card radius="md" p="lg">
       {/* nowrap keeps the icon on the right even when a long label wraps; labels stay in normal case (easier to read than capitals). */}
       <Group justify="space-between" align="flex-start" wrap="nowrap" gap="sm">
         <div style={{ minWidth: 0 }}>
           <Text size="sm" c="dimmed" fw={600}>{label}</Text>
-          <Text fw={800} fz={32} lh={1.2}>{value}</Text>
+          <Text fw={500} fz={34} lh={1.15} mt={6} className="td-figure">{value}</Text>
         </div>
-        <ThemeIcon size={42} radius="md" variant="light" color={color} aria-hidden style={{ flexShrink: 0 }}>{icon}</ThemeIcon>
+        <span aria-hidden style={{ color: color === 'coral' ? 'var(--color-paid)' : 'var(--color-muted)', flexShrink: 0, display: 'inline-flex' }}>{icon}</span>
       </Group>
-    </Paper>
+    </Card>
   )
 }
 
@@ -73,16 +73,16 @@ export function Overview() {
   return (
     <Stack gap="lg">
       <SimpleGrid cols={{ base: 1, xs: 2, md: 4 }}>
-        <Stat label={t('organiser.overview.questions')} value={total} icon={<IconMessageQuestion />} color="teal" />
-        <Stat label={t('organiser.overview.answered')} value={pct(ins.by_status.answered)} icon={<IconCircleCheck />} color="teal" />
-        <Stat label={t('organiser.overview.notCovered')} value={pct(ins.by_status.insufficient_evidence)} icon={<IconSearchOff />} color="orange" />
-        <Stat label={t('organiser.overview.openReports')} value={rev.counts.pending} icon={<IconInbox />} color="blue" />
+        <Stat label={t('organiser.overview.questions')} value={total} icon={<IconMessageQuestion />} color="ink" />
+        <Stat label={t('organiser.overview.answered')} value={pct(ins.by_status.answered)} icon={<IconCircleCheck />} color="coral" />
+        <Stat label={t('organiser.overview.notCovered')} value={pct(ins.by_status.insufficient_evidence)} icon={<IconSearchOff />} color="ink" />
+        <Stat label={t('organiser.overview.openReports')} value={rev.counts.pending} icon={<IconInbox />} color="ink" />
       </SimpleGrid>
       {total === 0 ? (
         <Alert color="gray">{t('organiser.overview.noData')}</Alert>
       ) : (
         <SimpleGrid cols={{ base: 1, md: 2 }}>
-          <Card withBorder radius="lg" padding="lg">
+          <Card radius="md" padding="lg">
             <Title order={2} size="h4" mb="md">{t('organiser.overview.statusChart')}</Title>
             <Center>
               <DonutChart data={donut} withLabels withLabelsLine withTooltip size={180} thickness={28} chartLabel={total} />
@@ -91,15 +91,15 @@ export function Overview() {
               {donut.map((d) => (
                 <Group key={d.name} gap={6}>
                   <span style={{ width: 10, height: 10, borderRadius: 3, background: `var(--mantine-color-${d.color.replace('.', '-')})` }} aria-hidden />
-                  <Text size="sm">{d.name} · {d.value}</Text>
+                  <Text size="sm">{d.name}{t('punct.colon')}<span className="td-figure">{d.value}</span></Text>
                 </Group>
               ))}
             </Group>
           </Card>
-          <Card withBorder radius="lg" padding="lg">
+          <Card radius="md" padding="lg">
             <Title order={2} size="h4" mb="md">{t('organiser.overview.gapsChart')}</Title>
             {bars.length ? (
-              <BarChart h={280} data={bars} dataKey="question" orientation="vertical" yAxisProps={{ width: 200, interval: 0 }} barProps={{ maxBarSize: 34, radius: 6 }} series={[{ name: 'count', label: t('organiser.overview.times'), color: 'orange.6' }]} gridAxis="none" />
+              <BarChart h={280} data={bars} dataKey="question" orientation="vertical" yAxisProps={{ width: 200, interval: 0 }} barProps={{ maxBarSize: 34, radius: 6 }} series={[{ name: 'count', label: t('organiser.overview.times'), color: 'coral.6' }]} gridAxis="none" />
             ) : (
               <Text c="dimmed">{t('organiser.gaps.empty')}</Text>
             )}
@@ -121,7 +121,7 @@ function ReviewCard({ item, onSaved }: { item: ReviewItem; onSaved: () => void }
     setSaving(true)
     try {
       await api.updateReview(item.id, done ? 'pending' : 'reviewed', note)
-      notifications.show({ color: 'teal', icon: <IconCheck size={18} />, message: t('organiser.queue.saved') })
+      notifications.show({ color: 'ink', icon: <IconCheck size={18} />, message: t('organiser.queue.saved') })
       onSaved()
     } finally {
       setSaving(false)
@@ -129,18 +129,18 @@ function ReviewCard({ item, onSaved }: { item: ReviewItem; onSaved: () => void }
   }
 
   return (
-    <Card withBorder radius="lg" padding="lg">
+    <Card radius="md" padding="lg">
       <Group justify="space-between" align="flex-start" mb="xs" wrap="wrap">
-        <Text fw={700} size="lg">{item.question}</Text>
+        <Text fw={600} size="lg">{item.question}</Text>
         {done ? (
-          <Badge color="teal" leftSection={<IconCheck size={12} />}>{t('organiser.queue.done', { date: when(item.reviewed_at, i18n.language) })}</Badge>
+          <Badge leftSection={<IconCheck size={12} />}>{t('organiser.queue.done', { date: when(item.reviewed_at, i18n.language) })}</Badge>
         ) : (
-          <Badge color="blue" variant="light" leftSection={<IconClock size={12} />}>{t('organiser.queue.filters.pending')}</Badge>
+          <Badge leftSection={<IconClock size={12} />}>{t('organiser.queue.filters.pending')}</Badge>
         )}
       </Group>
       <Group gap="xs" mb="sm">
-        {item.answer_status && <Badge variant="light" color={STATUS_COLOR[item.answer_status].split('.')[0]}>{t(`organiser.statusShort.${item.answer_status}`)}</Badge>}
-        <Badge variant="outline" color="gray">{t(`report.reasons.${item.review_reason}`)}</Badge>
+        {item.answer_status && <Badge>{t(`organiser.statusShort.${item.answer_status}`)}</Badge>}
+        <Badge>{t(`report.reasons.${item.review_reason}`)}</Badge>
         <Text size="xs" c="dimmed">{t('organiser.queue.reported', { date: when(item.created_at, i18n.language) })}</Text>
       </Group>
       <Stack gap={4} mb="sm">
@@ -211,20 +211,20 @@ export function Gaps() {
         <Alert color="gray">{t('organiser.gaps.empty')}</Alert>
       ) : (
         data.top_gaps.map((g, i) => (
-          <Paper key={g.question} withBorder radius="lg" p="md">
+          <Card key={g.question} radius="md" p="lg">
             <Group align="flex-start" wrap="nowrap">
-              <ThemeIcon radius="xl" size={32} variant="light" color="orange" aria-hidden><Text fw={800} size="sm">{i + 1}</Text></ThemeIcon>
+              <span className="td-num" aria-hidden style={{ width: 30, height: 30, fontSize: 14 }}>{i + 1}</span>
               <Stack gap={6} style={{ flex: 1 }}>
-                <Text fw={700}>{g.question}</Text>
+                <Text fw={600}>{g.question}</Text>
                 <Group gap="xs">
-                  {g.reported > 0 && <Badge color="orange">{t('organiser.gaps.requested', { count: g.reported })}</Badge>}
-                  {g.asked > 0 && <Badge variant="light" color="gray">{t('organiser.gaps.asked', { count: g.asked })}</Badge>}
+                  {g.reported > 0 && <Badge variant="filled" color="ink">{t('organiser.gaps.requested', { count: g.reported })}</Badge>}
+                  {g.asked > 0 && <Badge>{t('organiser.gaps.asked', { count: g.asked })}</Badge>}
                 </Group>
                 {g.missing_info && <Text size="sm"><b>{t('organiser.gaps.missing')}{t('punct.colon')}</b> {g.missing_info}</Text>}
-                {g.reader_notes.length > 0 && <Text size="sm" c="dimmed"><b>{t('organiser.gaps.notes')}{t('punct.colon')}</b> {g.reader_notes.slice(0, 3).join(' · ')}</Text>}
+                {g.reader_notes.length > 0 && <Text size="sm" c="dimmed"><b>{t('organiser.gaps.notes')}{t('punct.colon')}</b> {g.reader_notes.slice(0, 3).join('; ')}</Text>}
               </Stack>
             </Group>
-          </Paper>
+          </Card>
         ))
       )}
       <Text size="xs" c="dimmed">{t('organiser.gaps.excluded')}</Text>
@@ -257,9 +257,9 @@ export function Docs() {
                 <Table.Td>{d.version}</Table.Td>
                 <Table.Td>
                   {d.status === 'active' ? (
-                    <Badge color="teal" variant="light">{t('organiser.docs.current')}</Badge>
+                    <Badge variant="filled" color="ink">{t('organiser.docs.current')}</Badge>
                   ) : (
-                    <Badge color="gray" variant="light">{t('organiser.docs.superseded', { by: d.superseded_by ?? '?' })}</Badge>
+                    <Badge>{t('organiser.docs.superseded', { by: d.superseded_by ?? '?' })}</Badge>
                   )}
                 </Table.Td>
                 <Table.Td>{d.effective_date}</Table.Td>
@@ -289,7 +289,7 @@ export function Quality() {
   return (
     <Stack gap="lg">
       <Text>{t('organiser.quality.intro')}</Text>
-      <Card withBorder radius="lg" padding="lg">
+      <Card radius="md" padding="lg">
         <Title order={2} size="h4" mb="md">{t('organiser.quality.chart', { n: q.held_out_questions })}</Title>
         {/* Horizontal bars: the check names stay level and readable instead of slanted axis labels. */}
         <BarChart
@@ -305,12 +305,12 @@ export function Quality() {
           barProps={{ maxBarSize: 16, radius: 4 }}
           gridAxis="x"
           series={[
-            { name: 'ours', label: t('organiser.quality.ours'), color: 'teal.7' },
-            { name: 'plain', label: t('organiser.quality.plain'), color: 'gray.5' },
+            { name: 'ours', label: t('organiser.quality.ours'), color: 'coral.6' },
+            { name: 'plain', label: t('organiser.quality.plain'), color: 'ink.3' },
           ]}
         />
       </Card>
-      <Card withBorder radius="lg" padding="lg">
+      <Card radius="md" padding="lg">
         <Title order={2} size="h4" mb="sm">{t('organiser.quality.runsTitle')}</Title>
         <Table withTableBorder verticalSpacing="xs">
           <Table.Thead>
@@ -333,10 +333,10 @@ export function Quality() {
         <Text size="sm" c="dimmed" mt="sm">{t('organiser.quality.variance')}</Text>
       </Card>
       <SimpleGrid cols={{ base: 1, sm: 2 }}>
-        <Stat label={`${t('organiser.quality.cost')} · ${t('organiser.quality.ours')}`} value={cents(q.cost_per_question_usd.ours)} icon={<IconCircleCheck />} color="teal" />
-        <Stat label={`${t('organiser.quality.latency')} · ${t('organiser.quality.ours')}`} value={`${q.median_latency_s.ours} s`} icon={<IconClock />} color="teal" />
+        <Stat label={`${t('organiser.quality.cost')}${t('punct.colon')}${t('organiser.quality.ours')}`} value={cents(q.cost_per_question_usd.ours)} icon={<IconCircleCheck />} color="ink" />
+        <Stat label={`${t('organiser.quality.latency')}${t('punct.colon')}${t('organiser.quality.ours')}`} value={`${q.median_latency_s.ours} s`} icon={<IconClock />} color="ink" />
       </SimpleGrid>
-      <Alert color="yellow" variant="light" icon={<IconAlertCircle />}>{t('organiser.quality.note')} ({q.run_date})</Alert>
+      <Alert icon={<IconAlertCircle />}>{t('organiser.quality.note')} ({q.run_date})</Alert>
     </Stack>
   )
 }

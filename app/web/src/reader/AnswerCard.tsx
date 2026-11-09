@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  Accordion, Alert, Badge, Button, Card, Checkbox, CopyButton, Divider, Group, Highlight, Paper, Stack, Text, Textarea, ThemeIcon, Title,
+  Accordion, Alert, Box, Button, Card, Checkbox, CopyButton, Divider, Group, Highlight, Stack, Text, Textarea,
 } from '@mantine/core'
 import {
   IconAlertTriangle, IconCheck, IconCircleCheck, IconClock, IconCopy, IconFileText, IconFlag, IconHelpCircle, IconListDetails, IconMessageCircleQuestion,
@@ -12,33 +12,31 @@ import { usePrefs } from '../prefs'
 import type { AnswerResult, AskPayload, Citation, Status } from '../types'
 import ReportModal from './ReportModal'
 
-const STATUS_STYLE: Record<Status, { color: string; icon: ReactNode }> = {
-  answered: { color: 'teal', icon: <IconCircleCheck /> },
-  insufficient_evidence: { color: 'orange', icon: <IconSearchOff /> },
-  needs_clarification: { color: 'blue', icon: <IconHelpCircle /> },
-  withheld: { color: 'red', icon: <IconShieldX /> },
+// Status is an ink outline (Coral). Only a verified answer spends the coral, as a pressed stamp.
+const STATUS_ICON: Record<Status, { icon: ReactNode; tone: string }> = {
+  answered: { icon: <IconCircleCheck />, tone: 'var(--color-paid)' },
+  insufficient_evidence: { icon: <IconSearchOff />, tone: 'var(--color-ink)' },
+  needs_clarification: { icon: <IconHelpCircle />, tone: 'var(--color-ink)' },
+  withheld: { icon: <IconShieldX />, tone: 'var(--mantine-color-red-light-color)' },
 }
 
 function NumberDot({ n }: { n: number }) {
-  return (
-    <ThemeIcon size={22} radius="xl" variant="light" aria-hidden>
-      <Text size="xs" fw={700}>{n}</Text>
-    </ThemeIcon>
-  )
+  return <span className="td-num" aria-hidden>{n}</span>
 }
 
-function SectionLabel({ n, children }: { n: number; children: ReactNode }) {
+/** The numbered label of an answer section: a real heading, so screen readers can jump between sections. */
+function SectionLabel({ n, id, children }: { n: number; id: string; children: ReactNode }) {
   return (
-    <Group gap={8} mb={6}>
+    <Group gap={8} mb={8} wrap="nowrap">
       <NumberDot n={n} />
-      <Text size="sm" fw={700} c="dimmed">
+      <Text component="h2" id={id} size="sm" fw={500} c="dimmed" m={0}>
         {children}
       </Text>
     </Group>
   )
 }
 
-/** One card per source section; every quoted passage from it is highlighted in place. */
+/** One well per source section; every quoted passage from it is underlined in place. */
 interface SourceGroup {
   source_id: string
   title?: string
@@ -66,31 +64,32 @@ function Evidence({ g }: { g: SourceGroup }) {
   const { t } = useTranslation()
   const ok = g.unverified.length === 0
   return (
-    <Paper withBorder radius="md" p="sm">
+    <Box className="td-well" p="md">
       <Group justify="space-between" mb={4} wrap="wrap" gap={6}>
         <Group gap={6}>
           <IconFileText size={16} aria-hidden />
           <Text fw={600} size="sm">{g.title ?? g.source_id}</Text>
         </Group>
-        <Badge color={ok ? 'teal' : 'red'} variant="light" leftSection={ok ? <IconCheck size={12} /> : <IconAlertTriangle size={12} />}>
+        <span className={ok ? 'td-tag' : 'td-tag td-tag--bad'}>
+          {ok ? <IconCheck size={14} aria-hidden /> : <IconAlertTriangle size={14} aria-hidden />}
           {ok ? t('answer.verified') : t('answer.notFound')}
-        </Badge>
+        </span>
       </Group>
       {g.version && (
-        <Text size="xs" c="dimmed" mb={6}>
+        <Text size="xs" c="dimmed" mb={8}>
           {t('answer.docMeta', { id: g.source_id, version: g.version, date: g.effective_date })}
-          {g.highlights.length > 0 && ` · ${t('answer.quotesHighlighted', { count: g.highlights.length })}`}
+          {g.highlights.length > 0 && `${t('punct.sep')}${t('answer.quotesHighlighted', { count: g.highlights.length })}`}
         </Text>
       )}
       {g.source_text && (
-        <Highlight highlight={g.highlights} size="sm" lang="en" className="wrap-anywhere" highlightStyles={{ fontWeight: 600 }}>
+        <Highlight highlight={g.highlights} size="sm" lang="en" className="wrap-anywhere td-quote" lh={1.65}>
           {g.source_text}
         </Highlight>
       )}
       {g.unverified.map((q) => (
         <Text key={q} size="sm" c="red" mt={6}>{t('answer.notFoundText', { quote: q })}</Text>
       ))}
-    </Paper>
+    </Box>
   )
 }
 
@@ -110,7 +109,7 @@ export default function AnswerCard({
   const [reply, setReply] = useState('')
   const [reportOpen, setReportOpen] = useState(false)
 
-  const style = STATUS_STYLE[result.status]
+  const status = STATUS_ICON[result.status]
   const withheld = result.status === 'withheld'
   const clarify = result.status === 'needs_clarification'
   const steps = withheld ? [] : result.next_steps
@@ -139,22 +138,31 @@ export default function AnswerCard({
   }
 
   return (
-    <Card withBorder radius="lg" padding="xl" shadow="sm" className="answer-card">
+    <Card radius="md" padding="xl" className="answer-card td-arrive">
       <Text size="sm" c="dimmed" mb="xs">
         {t('answer.youAsked')}{t('punct.colon')}<Text span fs="italic" inherit>{payload.question}</Text>
       </Text>
 
-      <Alert color={style.color} variant="light" icon={style.icon} title={t(`status.${result.status}.title`)} mb="lg">
+      <Alert
+        icon={<span style={{ color: status.tone, display: 'inline-flex' }}>{status.icon}</span>}
+        title={
+          <Group gap="sm" wrap="wrap">
+            <span>{t(`status.${result.status}.title`)}</span>
+            {result.status === 'answered' && <span className="td-stamp"><IconCheck size={12} aria-hidden />{t('answer.verified')}</span>}
+          </Group>
+        }
+        mb="lg"
+      >
         {t(`status.${result.status}.desc`)}
       </Alert>
 
       {/* ① In one sentence */}
       {!withheld && bottomLine && (
         <section aria-labelledby="sec-bottom">
-          <SectionLabel n={++n}><span id="sec-bottom">{clarify ? t('answer.clarifyHeading') : t('answer.bottomLine')}</span></SectionLabel>
-          <Title order={2} size="h3" fw={700} lh={1.4} className="measure">
+          <SectionLabel n={++n} id="sec-bottom">{clarify ? t('answer.clarifyHeading') : t('answer.bottomLine')}</SectionLabel>
+          <Text component="p" fz="1.375rem" fw={600} lh={1.35} className="measure" style={{ letterSpacing: '-0.01em' }}>
             <Readable text={bottomLine} bionic={prefs.bionic} />
-          </Title>
+          </Text>
           <Group mt="sm" gap="xs">
             <Button variant="light" size="xs" leftSection={speaking ? <IconPlayerStop size={16} /> : <IconVolume size={16} />} onClick={listen}>
               {speaking ? t('answer.stop') : t('answer.listen')}
@@ -183,22 +191,22 @@ export default function AnswerCard({
         </Stack>
       )}
 
-      {/* Missing information */}
+      {/* Missing information: a tinted well, not a box in the card */}
       {result.status === 'insufficient_evidence' && result.missing_info && (
-        <Paper withBorder radius="md" p="sm" mt="md" bg="var(--mantine-color-orange-light)">
+        <Box className="td-well" p="md" mt="md">
           <Text size="sm" fw={600}>{t('answer.missing')}</Text>
           <Text size="sm"><Readable text={result.missing_info} bionic={prefs.bionic} /></Text>
-        </Paper>
+        </Box>
       )}
 
-      {/* ② What to do */}
+      {/* ② What to do: rows parted by hairlines */}
       {steps.length > 0 && (
         <section aria-labelledby="sec-todo" style={{ marginTop: 'var(--mantine-spacing-xl)' }}>
-          <SectionLabel n={++n}><span id="sec-todo">{t('answer.todo')}</span></SectionLabel>
-          <Text size="xs" c="dimmed" mb="xs">{t('answer.todoHint')}</Text>
-          <Stack gap="xs">
+          <SectionLabel n={++n} id="sec-todo">{t('answer.todo')}</SectionLabel>
+          <Text size="xs" c="dimmed" mb={4}>{t('answer.todoHint')}</Text>
+          <div>
             {steps.map((s, i) => (
-              <Paper key={i} withBorder radius="md" p="sm" className={done[i] ? 'step-done' : undefined} style={!s.verified ? { borderColor: 'var(--mantine-color-red-6)' } : undefined}>
+              <div key={i} className={['td-step', done[i] ? 'step-done' : '', !s.verified ? 'td-step--bad' : ''].join(' ')}>
                 <Checkbox
                   size="md"
                   checked={!!done[i]}
@@ -208,24 +216,10 @@ export default function AnswerCard({
                       <Text fw={600} className="step-action"><Readable text={s.action} bionic={prefs.bionic} /></Text>
                       {s.deadline && (
                         // Not a Badge: badges cut long text off with "…", and the deadline must always be readable in full.
-                        <Group
-                          gap={6}
-                          wrap="nowrap"
-                          px="sm"
-                          py={4}
-                          style={{
-                            alignSelf: 'flex-start',
-                            maxWidth: '100%',
-                            borderRadius: 'var(--mantine-radius-lg)',
-                            background: `var(--mantine-color-${s.deadline_supported === false ? 'red' : 'orange'}-light)`,
-                            color: `var(--mantine-color-${s.deadline_supported === false ? 'red' : 'orange'}-light-color)`,
-                          }}
-                        >
-                          <IconClock size={16} aria-hidden style={{ flexShrink: 0 }} />
-                          <Text component="span" size="sm" fw={700} c="inherit">
-                            {t('answer.deadline')}{t('punct.colon')}{s.deadline}
-                          </Text>
-                        </Group>
+                        <span className={s.deadline_supported === false ? 'td-deadline td-deadline--bad' : 'td-deadline'}>
+                          <IconClock size={16} aria-hidden />
+                          <span>{t('answer.deadline')}{t('punct.colon')}{s.deadline}</span>
+                        </span>
                       )}
                       {s.deadline && s.deadline_supported === false && <Text size="xs" c="red">{t('answer.deadlineWarn')}</Text>}
                       {s.verified ? (
@@ -236,12 +230,12 @@ export default function AnswerCard({
                     </Stack>
                   }
                 />
-              </Paper>
+              </div>
             ))}
-          </Stack>
+          </div>
           <CopyButton value={checklistText} timeout={2000}>
             {({ copied, copy }) => (
-              <Button mt="sm" size="xs" variant="subtle" leftSection={copied ? <IconCheck size={16} /> : <IconCopy size={16} />} onClick={copy}>
+              <Button mt="xs" size="xs" variant="subtle" leftSection={copied ? <IconCheck size={16} /> : <IconCopy size={16} />} onClick={copy}>
                 {copied ? t('answer.copied') : t('answer.copySteps')}
               </Button>
             )}
@@ -251,7 +245,7 @@ export default function AnswerCard({
 
       {/* ③ More detail and ④ evidence, folded so the page stays calm */}
       {!withheld && (result.answer && !clarify || evidence.length > 0) && (
-        <Accordion multiple variant="separated" radius="md" mt="xl" defaultValue={prefs.focus ? [] : ['evidence']}>
+        <Accordion multiple radius="md" mt="xl" defaultValue={prefs.focus ? [] : ['evidence']}>
           {result.answer && !clarify && (
             <Accordion.Item value="details">
               <Accordion.Control icon={<NumberDot n={++n} />}>
@@ -268,12 +262,12 @@ export default function AnswerCard({
           {evidence.length > 0 && (
             <Accordion.Item value="evidence">
               <Accordion.Control icon={<NumberDot n={++n} />}>
-                <Group gap="xs">
+                <Group gap="sm" wrap="wrap">
                   <IconQuote size={18} aria-hidden />
                   <Text fw={600}>{t('answer.evidence')}</Text>
-                  <Badge variant="light" color={verifiedCount === quoteCount ? 'teal' : 'red'}>
-                    {t('answer.verified')} {verifiedCount}/{quoteCount}
-                  </Badge>
+                  <span className={verifiedCount === quoteCount ? 'td-tag' : 'td-tag td-tag--bad'}>
+                    {t('answer.verified')} <span className="td-figure">{verifiedCount}/{quoteCount}</span>
+                  </span>
                 </Group>
               </Accordion.Control>
               <Accordion.Panel>
@@ -287,7 +281,7 @@ export default function AnswerCard({
         </Accordion>
       )}
 
-      <Divider my="lg" />
+      <Divider my="lg" color="var(--color-rule)" />
       <Group justify="space-between" wrap="wrap" gap="xs">
         <Group gap="xs">
           <Button

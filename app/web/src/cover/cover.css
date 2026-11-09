@@ -1,0 +1,196 @@
+/* Hallmark · shape: Stat-Led (body; hero swapped, see critique) · genre: modern-minimal · theme: Coral (deal 1/3, seed evidence-first-help-desk-students-1bce·4c40468f·2026-11-09·r0) · job: try · draw: 7005a9
+ * hero: Stage · nav: banner over a retracting bar · footer: colophon block · imagery: the product (real screenshots) · signature: the job played as paperwork, a dense rule turned into one sentence and a pressed "verified" stamp
+ * axes: light/grotesk-sans/warm · posture: restrained · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest: H, the draw's Corridor hero would push the signature below the fold, so the hero is Stage with the desk on seven columns */
+/* Hallmark · waive 8 · anatomy.md try: before and after, moments, platforms, close · the order is the draw's for the job, not a template run */
+
+/* ---------- Scoped base (the scaffold's base.css, limited to the cover so the app screens keep Mantine's) ---------- */
+.hm { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-body); font-size: var(--text-md); line-height: 1.55; }
+.hm h1, .hm h2, .hm h3 { margin: 0; font-family: var(--font-display); font-weight: var(--display-weight); letter-spacing: var(--tracking-display); line-height: 1.05; overflow-wrap: break-word; min-width: 0; text-wrap: balance; }
+.hm h1 { max-width: 18ch; font-size: var(--text-display); line-height: 1.02; }
+.hm h2 { max-width: 22ch; font-size: var(--text-section); }
+.hm h3 { max-width: 40ch; font-size: var(--text-title); line-height: 1.2; letter-spacing: -0.015em; }
+.hm p { margin: 0; text-wrap: pretty; }
+.hm .lead { font-size: var(--text-lead); line-height: 1.45; max-width: 46ch; color: var(--color-ink-2); }
+.hm a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+.hm a:hover { text-decoration-color: var(--color-accent-2); }
+.hm img { max-width: 100%; height: auto; display: block; }
+.hm .container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+.hm .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); }
+.hm .fig { font-family: var(--font-outlier); font-variant-numeric: tabular-nums; font-weight: 400; }
+.hm .small { font-size: var(--text-sm); color: var(--color-muted); }
+.hm section { scroll-margin-top: 96px; }
+/* Chinese is never tracked tighter, and a CJK head breaks between phrases, not inside them. */
+.hm:lang(zh) h1, .hm:lang(zh) h2, .hm:lang(zh) h3, .hm:lang(zh) .hm-card-answer { letter-spacing: 0; line-break: strict; }
+.hm:lang(zh) h1 { line-height: 1.12; }
+
+/* ---------- Surfaces (Coral) ---------- */
+.hm .desk { background-color: var(--color-desk); background-image: radial-gradient(90% 120% at 0% 30%, var(--color-cotton), transparent 62%), var(--tex-desk); }
+.hm .stock { background-color: var(--color-cotton); background-image: linear-gradient(100deg, var(--color-cotton), transparent 45%), var(--tex-cotton); color: var(--color-print); box-shadow: var(--edge-stock), var(--cast-stock); border-radius: var(--radius-stock); }
+.hm .board { background: var(--color-board); color: var(--color-board-type); }
+
+/* ---------- Controls: letterpress cards, eight states ---------- */
+.hm .btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-xs);
+  min-height: 48px; padding: 0 var(--space-lg); border: 0; border-radius: var(--radius-stock);
+  font: inherit; font-weight: 500; text-decoration: none; cursor: pointer; white-space: nowrap;
+  transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
+}
+.hm .btn--card { background-color: var(--color-cotton); background-image: var(--tex-cotton); color: var(--color-print); text-shadow: 0.5px 0.75px 0 var(--color-cotton); box-shadow: var(--edge-stock), var(--cast-stock); }
+.hm .btn--ink { background: var(--color-board); color: var(--color-board-type); text-shadow: 0 -0.75px 0 var(--color-ink); box-shadow: var(--cast-stock); }
+@media (hover: hover) and (pointer: fine) { .hm .btn:hover { transform: translateY(-1px); box-shadow: var(--edge-stock), var(--cast-stock-lift); } }
+.hm .btn:active { transform: translateY(1px) scale(0.98); }
+.hm .btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+.hm .btn[aria-disabled='true'] { opacity: 0.55; pointer-events: none; }
+.hm .btn svg { flex-shrink: 0; }
+
+/* ---------- Chrome: a banner over a bar that retracts on scroll ---------- */
+.hm-banner > span { max-width: 75ch; }
+.hm-banner { background: var(--color-paper-2); font-size: var(--text-sm); color: var(--color-ink-2); padding-block: var(--space-xs); }
+.hm-bar { position: sticky; top: 0; z-index: var(--z-sticky-nav); background: color-mix(in oklab, var(--color-paper) 92%, transparent); backdrop-filter: saturate(1.1) blur(8px); border-bottom: 1px solid var(--color-rule); transition: transform var(--dur-short) var(--ease-out); }
+.hm-bar[data-hidden='true'] { transform: translateY(-100%); }
+.hm-bar-inner { display: flex; align-items: center; gap: var(--space-lg); min-height: 68px; }
+.hm-links { display: flex; gap: var(--space-lg); margin-left: auto; }
+.hm-links a { font-size: var(--text-sm); text-decoration: none; color: var(--color-ink-2); padding-block: var(--space-xs); }
+.hm-links a:hover { color: var(--color-ink); text-decoration: underline; text-decoration-color: var(--color-accent-2); }
+.hm-bar .btn { min-height: 40px; padding-inline: var(--space-md); }
+
+/* ---------- Hero: Stage, the desk on seven columns ---------- */
+.hm-hero { min-height: calc(100svh - 112px); display: grid; align-items: center; padding-block: var(--space-xl) var(--space-2xl); }
+.hm-hero-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-3xl); align-items: center; }
+.hm-hero-text { display: grid; gap: var(--space-lg); justify-items: start; }
+.hm-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xs); }
+
+/* The signature: the job played as paperwork on the desk. Sized from one unit (cqi) so it scales whole. */
+.hm-figure { margin: 0; display: grid; gap: var(--space-sm); }
+.hm-scene { position: relative; container-type: inline-size; aspect-ratio: 7 / 6; }
+.hm-sheet { position: absolute; left: 4%; top: 5%; width: 60%; padding: 5cqi 5cqi 6cqi; font-size: max(11px, 1.9cqi); line-height: 1.6; transform: rotate(-1deg); }
+.hm-sheet header { display: grid; gap: 0.6cqi; margin-bottom: 3cqi; padding-bottom: 2cqi; border-bottom: 1px solid var(--color-rule); }
+.hm-sheet-title { font-weight: 600; font-size: max(12px, 2.4cqi); color: var(--color-print); }
+.hm-sheet-meta { color: var(--color-muted); }
+.hm-sheet p { color: var(--color-ink-2); margin-bottom: 2.2cqi; }
+.hm-mark { position: relative; color: var(--color-print); font-weight: 500; }
+.hm-mark::after { content: ''; position: absolute; left: 0; right: 0; bottom: -0.15em; height: 0.22em; border-radius: 2px; background: var(--color-accent); transform-origin: left center; animation: hm-draw 900ms var(--ease-in-out) 500ms backwards; }
+.hm-card { position: absolute; right: 3%; bottom: 6%; width: 54%; padding: 4.2cqi; display: grid; gap: 2.4cqi; transform: rotate(1.5deg); box-shadow: var(--edge-stock), var(--cast-stock-lift); animation: hm-card-in 650ms var(--ease-out) 1500ms backwards; }
+.hm-card-label { display: flex; align-items: center; gap: 1.4cqi; font-size: max(11px, 1.8cqi); color: var(--color-muted); font-weight: 500; }
+.hm-card-label .td-num { width: max(18px, 3.2cqi); height: max(18px, 3.2cqi); font-size: max(10px, 1.6cqi); }
+.hm-card-answer { font-weight: 600; font-size: max(14px, 3.1cqi); line-height: 1.3; letter-spacing: -0.015em; color: var(--color-print); }
+.hm-check { display: flex; align-items: center; gap: 1.6cqi; padding-top: 2.2cqi; border-top: 1px solid var(--color-rule); font-weight: 500; font-size: max(12px, 2.1cqi); animation: hm-fade 300ms var(--ease-out) 2300ms backwards; }
+.hm-box { display: grid; place-items: center; width: max(18px, 3.4cqi); height: max(18px, 3.4cqi); border-radius: 4px; background: var(--color-board); color: var(--color-board-type); flex-shrink: 0; }
+.hm-box svg { width: 70%; height: 70%; animation: hm-tick 220ms var(--ease-out) 2900ms backwards; }
+.hm-deadline { display: inline-flex; align-items: center; gap: 1cqi; justify-self: start; padding: 0.8cqi 1.8cqi; border-radius: 6px; background: var(--color-board); color: var(--color-board-type); font-weight: 600; font-size: max(11px, 1.9cqi); animation: hm-rise 320ms var(--ease-out) 3200ms backwards; }
+.hm-deadline svg { width: max(12px, 2.2cqi); height: max(12px, 2.2cqi); flex-shrink: 0; }
+.hm-stamp { position: absolute; right: 5cqi; top: -2.6cqi; padding: 1cqi 2.2cqi; border: 2px solid var(--color-paid); border-radius: 5px; color: var(--color-paid); font-weight: 600; font-size: max(13px, 2.6cqi); letter-spacing: 0.01em; transform: rotate(-6deg); background: color-mix(in oklab, var(--color-cotton) 70%, transparent); animation: hm-press 260ms var(--ease-out) 3800ms backwards; }
+.hm-figure figcaption { font-size: var(--text-sm); color: var(--color-muted); }
+
+@keyframes hm-draw { from { transform: scaleX(0); } }
+@keyframes hm-card-in { from { opacity: 0; transform: translate(-4%, 8%) rotate(-2deg); } }
+@keyframes hm-fade { from { opacity: 0; } }
+@keyframes hm-tick { from { opacity: 0; transform: scale(0.6); } }
+@keyframes hm-rise { from { opacity: 0; transform: translateY(6px); } }
+@keyframes hm-press { from { opacity: 0; transform: rotate(-9deg) scale(1.18); } }
+
+/* ---------- Sections ---------- */
+.hm-section { padding-block: var(--section-gap); }
+.hm-head { display: grid; gap: var(--space-md); margin-bottom: var(--space-2xl); }
+.hm-head--split { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); align-items: end; }
+.hm-head--split > :first-child { grid-column: 1 / 7; }
+.hm-head--split > :last-child { grid-column: 8 / 13; }
+
+/* Before and after: a switcher, the groove control with a card riding in it */
+.hm-switch { display: inline-flex; max-width: 100%; padding: 4px; gap: 4px; border-radius: 12px; background: var(--color-paper-2); box-shadow: var(--press-groove); margin-bottom: var(--space-xl); }
+.hm-switch button { min-height: 44px; padding: 0 var(--space-lg); white-space: nowrap; flex: 1 1 auto; border: 0; border-radius: 9px; background: transparent; font: inherit; font-weight: 500; color: var(--color-ink-2); cursor: pointer; transition: transform var(--dur-micro) var(--ease-out); }
+.hm-switch button[aria-pressed='true'] { background: var(--color-cotton); color: var(--color-ink); box-shadow: var(--edge-stock), var(--cast-stock); }
+.hm-switch button:active { transform: scale(0.97); }
+.hm-ba { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: var(--space-3xl); align-items: start; }
+.hm-ba-sheet { padding: var(--space-xl); font-size: var(--text-sm); line-height: 1.75; display: grid; gap: var(--space-md); max-height: 560px; }
+.hm-ba-sheet h3 { font-size: var(--text-md); letter-spacing: 0; }
+.hm-ba-sheet p { color: var(--color-ink-2); max-width: 72ch; }
+.hm-ba-shot { border-radius: var(--radius-card); box-shadow: var(--edge-stock), var(--cast-stock-lift); overflow: hidden; background: var(--color-cotton); }
+.hm-ba-count { display: grid; gap: var(--space-xs); padding-top: var(--space-md); border-top: 1px solid var(--color-rule); }
+.hm-ba-count .fig { font-size: var(--text-display-s); line-height: 1; letter-spacing: -0.04em; }
+
+/* Figures: three real numbers parted by vertical hairlines */
+.hm-figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--color-rule-2); }
+.hm-figures > div { display: grid; gap: var(--space-sm); align-content: start; padding: var(--space-xl) var(--space-xl) 0; }
+.hm-figures > div:first-child { padding-left: 0; }
+.hm-figures > div + div { border-left: 1px solid var(--color-rule-2); }
+.hm-figures .fig { font-size: var(--text-display-s); line-height: 1; letter-spacing: -0.04em; color: var(--color-ink); }
+.hm-figures p { max-width: 32ch; color: var(--color-ink-2); }
+.hm .hm-figures-note { margin-top: var(--space-xl); max-width: 70ch; }
+
+/* Moments: one screen held sticky while short panels pass it */
+.hm-pinned { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-3xl); }
+.hm-pin { position: sticky; top: 112px; align-self: start; }
+.hm-pin-stack { position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius-card); overflow: hidden; box-shadow: var(--edge-stock), var(--cast-stock-lift); background: var(--color-cotton); }
+.hm-pin-stack img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; opacity: 0; transition: opacity 280ms var(--ease-out); }
+.hm-pin-stack img[data-on='true'] { opacity: 1; }
+.hm-panels { display: grid; }
+.hm-panel { min-height: 52vh; display: grid; align-content: center; gap: var(--space-md); padding-left: var(--space-lg); border-left: 1px solid var(--color-rule-2); transition: border-color var(--dur-short) var(--ease-out); }
+.hm-panel[data-on='true'] { border-left-color: var(--color-accent-2); }
+.hm-panel p { color: var(--color-ink-2); max-width: 38ch; }
+.hm-panel-shot { display: none; }
+
+/* Organisers: the head split over one wide screen */
+.hm-show { border-radius: var(--radius-card); overflow: hidden; box-shadow: var(--edge-stock), var(--cast-stock-lift); background: var(--color-cotton); }
+.hm-head-actions { display: grid; gap: var(--space-lg); justify-items: start; }
+
+/* What it needs: rows parted by hairlines */
+.hm-rows { border-top: 1px solid var(--color-rule-2); }
+.hm-row { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); padding-block: var(--space-xl); border-bottom: 1px solid var(--color-rule); align-items: baseline; }
+.hm-row h3 { grid-column: 1 / 6; }
+.hm-row p { grid-column: 6 / 13; color: var(--color-ink-2); max-width: 52ch; font-size: var(--text-lg); line-height: 1.5; }
+
+/* Close: the board, with real questions laid on it as cards */
+.hm-close { padding-block: var(--section-gap-s); }
+.hm-close h2 { color: var(--color-board-type); }
+.hm-close .lead { color: color-mix(in oklab, var(--color-board-type) 82%, var(--color-board)); }
+.hm-close-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-3xl); align-items: center; }
+.hm-questions { display: grid; gap: var(--space-sm); }
+.hm-q { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-md) var(--space-lg); min-height: 64px; text-decoration: none; font-weight: 500; font-size: var(--text-lg); transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-short) var(--ease-out); box-shadow: var(--edge-stock), 6px 5px 10px -6px oklch(var(--deep) / 0.6); }
+@media (hover: hover) and (pointer: fine) { .hm-q:hover { transform: translateY(-1px); } }
+.hm-q:active { transform: translateY(1px) scale(0.99); }
+.hm-q:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+.hm-q svg { flex-shrink: 0; color: var(--color-muted); }
+
+/* Footer: a colophon block */
+.hm-footer { padding-block: var(--space-3xl) var(--space-2xl); border-top: 1px solid var(--color-rule); }
+.hm-footer-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-columns); row-gap: var(--space-xl); }
+.hm-footer-grid > p { grid-column: 1 / 8; color: var(--color-ink-2); max-width: 64ch; }
+.hm-footer-links { grid-column: 9 / 13; display: grid; gap: var(--space-xs); align-content: start; }
+.hm-footer-links a { text-decoration: none; padding-block: 2px; }
+.hm-footer-links a:hover { text-decoration: underline; text-decoration-color: var(--color-accent-2); }
+
+/* ---------- Under 60rem every composition stacks in reading order ---------- */
+@media (max-width: 60rem) {
+  .hm-links { display: none; }
+  .hm-bar-inner { gap: var(--space-sm); }
+  .hm-bar-inner > :nth-child(3) { margin-left: auto; }
+  .hm-hero { min-height: 0; padding-block: var(--space-xl) var(--space-2xl); }
+  .hm-hero-grid, .hm-ba, .hm-pinned, .hm-close-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); }
+  .hm-head--split, .hm-footer-grid { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-md); }
+  .hm-head--split > :first-child, .hm-head--split > :last-child { grid-column: 1 / -1; }
+  .hm-head { margin-bottom: var(--space-xl); }
+  .hm-figures { grid-template-columns: minmax(0, 1fr); }
+  .hm-figures > div { padding: var(--space-lg) 0; }
+  .hm-figures > div + div { border-left: 0; border-top: 1px solid var(--color-rule-2); }
+  .hm-pin { display: none; }
+  .hm-panel { min-height: 0; padding-block: var(--space-lg); border-left: 0; padding-left: 0; }
+  .hm-panel-shot { display: block; border-radius: var(--radius-card); overflow: hidden; box-shadow: var(--edge-stock), var(--cast-stock); margin-top: var(--space-sm); }
+  .hm-row { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-xs); }
+  .hm-row h3, .hm-row p { grid-column: 1 / -1; }
+  .hm-footer-grid > p, .hm-footer-links { grid-column: 1 / -1; }
+  .hm-ba-sheet { max-height: none; padding: var(--space-lg); }
+}
+@media (max-width: 40rem) {
+  .hm-bar .btn--ink { display: none; }
+  .hm-switch { display: flex; }
+  .hm-switch button { flex: 1 1 0; padding-inline: var(--space-sm); }
+  .hm-actions .btn { width: 100%; }
+  .hm-q { font-size: var(--text-md); }
+}
+
+/* Reduced motion and no script: the finished desk, nothing moves. */
+@media (prefers-reduced-motion: reduce) {
+  .hm *, .hm *::before, .hm *::after { animation: none !important; transition: none !important; }
+}

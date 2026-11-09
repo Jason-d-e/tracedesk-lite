@@ -1,8 +1,9 @@
 import type { Messages } from './en'
 
 const zh: Messages = {
-  punct: { colon: '：' },
+  punct: { colon: '：', sep: '。' },
   app: {
+    home: 'TraceDesk，回到封面',
     name: 'TraceDesk',
     tagline: '先说结论，再列清单，每一句都有出处。',
     navAsk: '提问',
@@ -67,7 +68,7 @@ const zh: Messages = {
     deadlineWarn: '这个时间在引用的原文里找不到，使用前请先核实。',
     stepUnverified: '这一步无法和资料对上，请不要依赖它。',
     stepSource: '来源：{{title}}',
-    quotesHighlighted: '已高亮 {{count}} 处引用',
+    quotesHighlighted: '已用下划线标出 {{count}} 处引用',
     copySteps: '复制清单',
     copied: '已复制',
     listen: '朗读',
@@ -80,11 +81,11 @@ const zh: Messages = {
     verified: '引文已核对',
     notFound: '原文中未找到',
     notFoundText: 'AI 引用的"{{quote}}"在这份资料里找不到。',
-    docMeta: '{{id}} · 第 {{version}} 版 · {{date}} 生效',
+    docMeta: '{{id}}，第 {{version}} 版，{{date}} 生效',
     clarifyHeading: '我们想先问你',
     clarifyLabel: '你的回答',
     clarifySend: '发送',
-    meta: '{{model}} · {{seconds}} 秒',
+    meta: '{{model}}，用时 {{seconds}} 秒',
     newQuestion: '再问一个问题',
   },
   report: {
@@ -195,6 +196,83 @@ const zh: Messages = {
       runsTitle: '每次运行中"全部检查通过"的题数',
       runsCols: { prompt: 'TraceDesk 提示词版本', plain: '简单提示词', ours: 'TraceDesk 提示词' },
       variance: '同一批题目，简单提示词两次运行的得分不同（15 和 17），所以几道题的差距可能只是随机波动。',
+    },
+  },
+  cover: {
+    banner: '可运行的原型。演示资料来自虚构的学生社团 DemoClub。不是医疗工具。',
+    nav: { how: '它怎么工作', organisers: '给组织者', start: '开始提问' },
+    hero: {
+      title: '读得更少，|绝不被误导。',
+      lead: '一句话结论，一份能打勾的清单，每个字都有原文出处。',
+      primary: '开始提问',
+      secondary: '看看答案是怎么来的',
+      note: '免费开源，在你自己的电脑上运行。',
+    },
+    desk: {
+      doc: 'DemoClub support guide',
+      docMeta: 'D02，取消报名，第 1 版',
+      cardLabel: '一句话结论',
+      answer: '在 2026年11月11日 18:00 MYT 前回复确认邮件，即可取消报名。',
+      step: '回复确认邮件',
+      deadline: '2026年11月11日 18:00 MYT',
+      stamp: '引文已核对',
+      caption: '帮助台的一次真实回答，在页面上重演一遍。',
+    },
+    before: {
+      title: '同一条规定，两种读法。',
+      lead: '密密麻麻的段落，会把你最需要的那个截止时间藏起来。',
+      tabs: { doc: '官方原文', answer: 'TraceDesk 回答' },
+      docWords: '个英文单词要读',
+      answerWords: '句话加一个步骤',
+      alt: 'TraceDesk 的答案卡：一句话结论、带截止时间的步骤和引用的原文。',
+    },
+    figures: {
+      title: '每句话都核对过。',
+      items: [
+        { value: '0', label: '在 200 多次真实提问中，逐字核对失败的引文数' },
+        { value: '20/20', label: '道检查题全部通过自动检查；普通提示词是 17/20' },
+        { value: '0', label: '个自动无障碍检测问题（WCAG 2.2 AA，中英文界面）' },
+      ],
+      note: '以上是 2026 年 11 月 9 日在虚构演示数据上的自动检查，不是准确率；也还没有请 ADHD 读者实际试用。',
+    },
+    moments: {
+      title: '为容易分心的人设计。',
+      items: [
+        { title: '先给一句话', text: '答案先用大字给出结论，细节默认折叠，想看再展开。' },
+        { title: '专注模式', text: '一个开关，只留下你的问题和答案，字也更大。' },
+        { title: '你的阅读设置', text: '字号、英文词首加粗、朗读语速和颜色，都会记在你的浏览器里。' },
+        { title: '不确定就先问', text: '问题可能有两种意思时，它会先问清楚，再回答。' },
+      ],
+      alts: [
+        '答案卡：一句话结论和清单。',
+        '专注模式：只剩问题和答案，字更大。',
+        '阅读设置抽屉。',
+        '帮助台反问读者指的是哪个链接。',
+      ],
+    },
+    organisers: {
+      title: '看清你的资料缺了什么。',
+      lead: '读者反馈、资料缺口和回答质量，都在一个后台里。',
+      action: '打开组织者后台',
+      alt: '组织者后台总览：提问数、资料能回答的比例、待处理反馈，以及最需要补充的信息。',
+    },
+    needs: {
+      title: '运行需要什么',
+      items: [
+        { title: '你当前有效的资料', text: '只有当前版本会交给模型；过期的旧稿会列出来，但不会被使用。' },
+        { title: '一台装了 Node.js 22 的电脑', text: '程序在本机运行，读者反馈只保存在你的电脑上。' },
+        { title: '一个 Anthropic API key', text: '由 Claude Haiku 5.5 回答，每题约 0.07 美分。' },
+        { title: '中文或英文', text: '两种语言都能问；引文保持原文的语言。' },
+      ],
+    },
+    close: {
+      title: '用一个真实的问题试试。',
+      lead: '选一个，或者自己写。',
+      questions: ['怎么取消报名？', '讲师是谁？', '那个链接多久失效？'],
+    },
+    footer: {
+      colophon: 'TraceDesk Lite 是 2026 年 11 月为 Ctrl+V 和 LaunchPad 黑客松做的原型，由我们团队在 AI 编程助手的协助下完成。资料描述的是一个虚构社团。它不是医疗工具，也不记录任何健康信息。',
+      links: { ask: '帮助台', organiser: '组织者后台', source: '源代码', evaluation: '评测简报' },
     },
   },
 }

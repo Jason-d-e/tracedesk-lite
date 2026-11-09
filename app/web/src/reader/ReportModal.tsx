@@ -35,7 +35,7 @@ export default function ReportModal({ opened, onClose, payload, result }: { open
         knowledge_version: result.meta.knowledge_version,
         model: result.meta.model_served,
       })
-      notifications.show({ color: 'teal', icon: <IconCheck size={18} />, message: t('report.sent') })
+      notifications.show({ color: 'ink', icon: <IconCheck size={18} />, message: t('report.sent') })
       setNote('')
       setConsent(false)
       onClose()
@@ -47,7 +47,7 @@ export default function ReportModal({ opened, onClose, payload, result }: { open
   }
 
   return (
-    <Modal opened={opened} onClose={onClose} title={<Text fw={700}>{gap ? t('report.askAdd') : t('report.title')}</Text>} centered>
+    <Modal opened={opened} onClose={onClose} title={<Text fw={600}>{gap ? t('report.askAdd') : t('report.title')}</Text>} centered>
       <Stack>
         <Select
           label={t('report.reason')}

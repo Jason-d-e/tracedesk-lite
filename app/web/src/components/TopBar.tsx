@@ -1,16 +1,30 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ActionIcon, Badge, Burger, Button, Group, SegmentedControl, Text, ThemeIcon, Tooltip } from '@mantine/core'
+import { ActionIcon, Burger, Button, Group, SegmentedControl, Text, Tooltip } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
-import { IconAdjustmentsHorizontal, IconLayoutDashboard, IconMessageQuestion, IconShieldCheck } from '@tabler/icons-react'
+import { IconAdjustmentsHorizontal, IconLayoutDashboard, IconMessageQuestion, IconPlugConnected, IconPlugConnectedX } from '@tabler/icons-react'
 import { LANGS, setLang, type Lang } from '../i18n'
 import { api } from '../api'
 import SettingsDrawer from './SettingsDrawer'
+import Logo from './Logo'
 
 type ModelState = 'checking' | 'connected' | 'offline' | 'unreachable'
 
-export default function TopBar({ page, navOpened, onNavToggle }: { page: 'reader' | 'organiser'; navOpened?: boolean; onNavToggle?: () => void }) {
+export function LanguageSwitch() {
   const { t, i18n } = useTranslation()
+  return (
+    <SegmentedControl
+      size="xs"
+      value={i18n.language as Lang}
+      onChange={(v) => setLang(v as Lang)}
+      data={LANGS.map((l) => ({ value: l.value, label: l.label }))}
+      aria-label={t('app.language')}
+    />
+  )
+}
+
+export default function TopBar({ page, navOpened, onNavToggle }: { page: 'reader' | 'organiser'; navOpened?: boolean; onNavToggle?: () => void }) {
+  const { t } = useTranslation()
   const [settingsOpen, settings] = useDisclosure(false)
   const [model, setModel] = useState<ModelState>('checking')
 
@@ -21,63 +35,36 @@ export default function TopBar({ page, navOpened, onNavToggle }: { page: 'reader
       .catch(() => setModel('unreachable'))
   }, [])
 
-  const modelColor = model === 'connected' ? 'teal' : model === 'checking' ? 'gray' : 'orange'
+  const other = page === 'reader'
+    ? { href: '#/organiser', label: t('app.navOrganiser'), icon: <IconLayoutDashboard size={18} /> }
+    : { href: '#/ask', label: t('app.navAsk'), icon: <IconMessageQuestion size={18} /> }
 
   return (
     <Group h="100%" px="md" justify="space-between" wrap="nowrap">
       <Group gap="sm" wrap="nowrap">
         {onNavToggle && <Burger opened={!!navOpened} onClick={onNavToggle} hiddenFrom="sm" size="sm" aria-label={t('organiser.title')} />}
-        <ThemeIcon size={36} radius="md" variant="gradient" gradient={{ from: 'teal.7', to: 'cyan.6', deg: 135 }} aria-hidden>
-          <IconShieldCheck size={22} />
-        </ThemeIcon>
-        <div>
-          <Text fw={800} size="lg" lh={1.1}>
-            {t('app.name')}
-          </Text>
-          <Text size="xs" c="dimmed" visibleFrom="md" className="hide-in-focus">
-            {t('app.tagline')}
-          </Text>
-        </div>
+        <Logo tagline />
       </Group>
 
       <Group gap="xs" wrap="nowrap">
         {model !== 'checking' && (
-          <Badge variant="dot" color={modelColor} visibleFrom="sm" className="hide-in-focus">
-            {t(`app.model.${model}`)}
-          </Badge>
+          <Group gap={6} visibleFrom="sm" className="hide-in-focus" wrap="nowrap">
+            {model === 'connected' ? <IconPlugConnected size={16} aria-hidden /> : <IconPlugConnectedX size={16} aria-hidden color="var(--mantine-color-red-light-color)" />}
+            <Text size="xs" c={model === 'connected' ? 'dimmed' : 'red'}>{t(`app.model.${model}`)}</Text>
+          </Group>
         )}
-        <SegmentedControl
-          size="xs"
-          value={i18n.language as Lang}
-          onChange={(v) => setLang(v as Lang)}
-          data={LANGS.map((l) => ({ value: l.value, label: l.label }))}
-          aria-label={t('app.language')}
-        />
-        <Tooltip label={t('settings.open')}>
-          <ActionIcon variant="light" size="lg" onClick={settings.open} aria-label={t('settings.open')}>
+        <LanguageSwitch />
+        <Tooltip label={t('settings.open')} openDelay={800}>
+          <ActionIcon variant="default" size="lg" onClick={settings.open} aria-label={t('settings.open')} className="td-press">
             <IconAdjustmentsHorizontal size={20} />
           </ActionIcon>
         </Tooltip>
-        {page === 'reader' ? (
-          <Button component="a" href="#/organiser" variant="subtle" leftSection={<IconLayoutDashboard size={18} />} visibleFrom="sm" className="hide-in-focus">
-            {t('app.navOrganiser')}
-          </Button>
-        ) : (
-          <Button component="a" href="#/" variant="subtle" leftSection={<IconMessageQuestion size={18} />} visibleFrom="sm">
-            {t('app.navAsk')}
-          </Button>
-        )}
-        <Tooltip label={page === 'reader' ? t('app.navOrganiser') : t('app.navAsk')}>
-          <ActionIcon
-            component="a"
-            href={page === 'reader' ? '#/organiser' : '#/'}
-            variant="subtle"
-            size="lg"
-            hiddenFrom="sm"
-            className="hide-in-focus"
-            aria-label={page === 'reader' ? t('app.navOrganiser') : t('app.navAsk')}
-          >
-            {page === 'reader' ? <IconLayoutDashboard size={20} /> : <IconMessageQuestion size={20} />}
+        <Button component="a" href={other.href} variant="subtle" leftSection={other.icon} visibleFrom="sm" className={page === 'reader' ? 'hide-in-focus' : undefined}>
+          {other.label}
+        </Button>
+        <Tooltip label={other.label} openDelay={800}>
+          <ActionIcon component="a" href={other.href} variant="subtle" size="lg" hiddenFrom="sm" className="hide-in-focus" aria-label={other.label}>
+            {other.icon}
           </ActionIcon>
         </Tooltip>
       </Group>

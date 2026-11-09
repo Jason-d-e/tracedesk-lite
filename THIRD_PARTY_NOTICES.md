@@ -1,6 +1,6 @@
 # Third-party components and references
 
-TraceDesk Lite reuses existing open-source work wherever it can. This file lists every component used, as of 2026-11-09.
+TraceDesk Lite reuses existing open-source work wherever it can. This file lists every component used, as of 2026-11-09 (v0.4).
 
 ## Server dependencies (`app/package.json`, exact versions)
 
@@ -24,9 +24,25 @@ TraceDesk Lite reuses existing open-source work wherever it can. This file lists
 | [easy-speech](https://github.com/leaonline/easy-speech) | 2.4.0 | MIT | (c) 2021 Jan Küster | Cross-browser read-aloud on top of the Web Speech API |
 | [text-vide](https://github.com/Gumball12/text-vide) | 1.8.6 | MIT | (c) 2022 shj | Optional "bold word starts" reading aid |
 
+## Fonts (loaded at runtime from their providers, not redistributed)
+
+| Font | License | Source | Used for |
+| --- | --- | --- | --- |
+| General Sans | ITF Free Font License (free for personal and commercial use) | Indian Type Foundry, via Fontshare | All Latin text |
+| Noto Sans SC | SIL Open Font License 1.1 | Google, via Google Fonts | Chinese text |
+| Geist Mono | SIL Open Font License 1.1 | Vercel, via Google Fonts | Figures and counts |
+
+## Design guidance (used while designing; nothing from these ships except where noted)
+
+- **[Hallmark](https://github.com/Nutlope/hallmark)** (MIT License, Copyright (c) 2026 Hallmark contributors; made by Together AI). The visual system is its "Coral" theme: the colour tokens, the letterpress control recipe and the generated paper-texture recipe in `app/web/src/styles/` are adapted from it. Its `sloplint` checker was run on the cover, the help desk and the dashboard.
+- **[Emil Kowalski's skills](https://github.com/emilkowalski/skills)** (MIT License, Copyright (c) 2026 Emil Kowalski). Motion rules: easing, durations, press feedback, reduced motion.
+- **[Impeccable](https://github.com/pbakaus/impeccable)** (Apache-2.0, Paul Bakaus). Its quality checklist was applied by hand.
+
 Build tools (not shipped in the bundle): [Vite](https://github.com/vitejs/vite) 8.3.6 (MIT) with @vitejs/plugin-react (MIT), [TypeScript](https://github.com/microsoft/TypeScript) 7.0.2 (Apache-2.0), postcss-preset-mantine 1.18.0 and postcss-simple-vars 7.0.1 (MIT). The interface started from Vite's official `react-ts` template.
 
 Each package's full license text ships inside `node_modules/<package>/` after `npm install`.
+
+  > Permission is hereby granted, free of charge, to any person obtaining a copy of this software … The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 ## Adapted text
 

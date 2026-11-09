@@ -1,31 +1,118 @@
+/* Hallmark · checked: 2026-11-09 · genre: modern-minimal · theme: Coral (deal 1/3, chosen by the team)
+ * shape: app screen · help desk and organiser dashboard restyled; their layout is the team's and stays
+ * built: the project · redesign: restyle · motion: state only (Emil Kowalski rules) · v2.0.0 */
+
+html, body { overflow-x: clip; }
+html { scrollbar-color: var(--color-muted) var(--color-paper); }
+body { caret-color: var(--color-accent-2); }
+body { font-synthesis: none; -webkit-font-smoothing: antialiased; }
+::selection { background: color-mix(in oklab, var(--color-accent) 24%, transparent); color: var(--color-ink); }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+
+/* ---------- Controls: letterpress cards (Coral), pressed on click (Emil: scale 0.97, 160ms ease-out) ---------- */
+.td-press {
+  transition: transform 160ms cubic-bezier(0.23, 1, 0.32, 1), box-shadow 160ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.td-press:active:not(:disabled):not([data-disabled]) { transform: scale(0.97); }
+.td-press[data-variant='default'], .td-press[data-variant='light'] {
+  background-color: var(--color-cotton);
+  color: var(--color-print);
+  box-shadow: var(--edge-stock), var(--cast-stock);
+}
+.td-press[data-variant='light'][data-disabled], .td-press[data-variant='default'][data-disabled] { box-shadow: none; opacity: 0.55; }
+@media (hover: hover) and (pointer: fine) {
+  .td-press[data-variant='default']:hover:not([data-disabled]),
+  .td-press[data-variant='light']:hover:not([data-disabled]) { background-color: var(--color-cotton); box-shadow: var(--edge-stock), var(--cast-stock-lift); }
+}
+.td-press[data-variant='filled'] { box-shadow: var(--cast-stock); }
+
+/* Fields: a muted-ink edge (3:1 or more) and a deep-coral ring on focus, shown at once. */
+.td-field { border-color: var(--color-muted); background-color: var(--color-cotton); }
+.td-field:focus, .td-field:focus-visible { border-color: var(--color-focus); box-shadow: 0 0 0 1px var(--color-focus); outline: none; }
+.td-check:not(:checked) { border-color: var(--color-muted); }
+.td-check:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.td-switch { border-color: var(--color-muted); }
+
+/* Paper: tinted wells by default (the surface ladder), cotton stock only where a component asks for it. */
+.td-paper[data-with-border] { border-color: var(--color-rule); }
+.td-well { background: var(--color-paper-2); border-radius: var(--radius-input); }
+
+/* A choice of two to four: a groove pressed into cotton with a card riding to the chosen stop. */
+.td-groove { background: var(--color-paper-2); box-shadow: var(--press-groove); }
+.td-groove-card { background: var(--color-cotton); box-shadow: var(--edge-stock), var(--cast-stock); }
+
+/* Topic tabs: ink text, the current tab a cotton card. */
+.mantine-Tabs-tab.td-tab { color: var(--color-ink-2); }
+.mantine-Tabs-tab.td-tab[data-active] { background: var(--color-cotton); color: var(--color-ink); box-shadow: var(--edge-stock), var(--cast-stock); }
+
+/* Dashboard navigation: the current page is the one accent mark. */
+.td-navlink { position: relative; }
+.td-navlink[data-active] { background: var(--color-cotton); color: var(--color-ink); box-shadow: var(--edge-stock), var(--cast-stock); }
+.td-navlink[data-active] .mantine-NavLink-label { font-weight: 600; }
+
+/* Accordion items part by hairlines inside the answer card (never a card inside a card). */
+.td-acc-item { border-color: var(--color-rule); }
+
+/* ---------- Answer card pieces ---------- */
+.td-num {
+  display: inline-grid; place-items: center; width: 24px; height: 24px; flex-shrink: 0;
+  border: 1.5px solid var(--color-ink); border-radius: 50%;
+  font-family: var(--font-outlier); font-size: 12px; color: var(--color-ink); font-variant-numeric: tabular-nums;
+}
+/* The settled state, pressed into the stock: the one place coral is spent. */
+.td-stamp {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px;
+  border: 1.5px solid var(--color-paid); border-radius: 4px; color: var(--color-paid);
+  font-weight: 600; font-size: 0.8125rem; line-height: 1.3; transform: rotate(-2deg); white-space: nowrap;
+}
+.td-stamp--bad { border-color: var(--mantine-color-red-filled); color: var(--mantine-color-red-light-color); transform: none; }
+/* A neutral tag: ink outline (Coral status), red only when something failed. */
+.td-tag { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border: 1px solid var(--color-rule-2); border-radius: 4px; color: var(--color-ink-2); font-size: 0.8125rem; font-weight: 500; line-height: 1.4; white-space: nowrap; }
+.td-tag--bad { border-color: var(--mantine-color-red-filled); color: var(--mantine-color-red-light-color); }
+/* Deadlines are the most important line in a step: ink board, never truncated. */
+.td-deadline {
+  display: inline-flex; align-items: flex-start; gap: 8px; align-self: flex-start; max-width: 100%;
+  padding: 4px 12px; border-radius: 6px; background: var(--color-board); color: var(--color-board-type);
+  font-weight: 600; font-size: 0.875rem; line-height: 1.4;
+}
+.td-deadline svg { flex-shrink: 0; margin-top: 2px; }
+.td-deadline--bad { background: transparent; color: var(--mantine-color-red-light-color); box-shadow: inset 0 0 0 1.5px var(--mantine-color-red-filled); }
+/* Verified quotes: a coral underline drawn under the words, never a fill behind text. */
+.td-quote mark {
+  background: transparent; color: inherit; font-weight: 600;
+  text-decoration: underline; text-decoration-color: var(--color-accent); text-decoration-thickness: 0.2em;
+  text-underline-offset: 0.2em; text-decoration-skip-ink: none;
+}
+.td-step + .td-step { border-top: 1px solid var(--color-rule); }
+.td-step { padding-block: 12px; }
+.td-step--bad .step-action { color: var(--mantine-color-red-light-color); }
+
+/* A new answer arrives: a fade with a 6px rise, once, ease-out (reduced motion: shown at once). */
+@keyframes td-arrive { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.td-arrive { animation: td-arrive 220ms cubic-bezier(0.23, 1, 0.32, 1); }
+
+/* Recent questions: the current one carries the accent mark. */
+.td-history-item { border-radius: 6px; position: relative; }
+.td-history-item[aria-current='true'] { background: var(--color-cotton); box-shadow: var(--edge-stock), var(--cast-stock); }
+.td-history-item[aria-current='true'] p:first-child { font-weight: 600; }
+
 /* Focus mode: keep only the question and the answer, calmer and larger. */
-body.focus-mode .hide-in-focus {
-  display: none !important;
-}
-body.focus-mode .answer-card {
-  border-width: 2px;
-}
-body.focus-mode * {
-  animation: none !important;
-  transition: none !important;
-}
+body.focus-mode .hide-in-focus { display: none !important; }
+body.focus-mode * { animation: none !important; transition: none !important; }
 
 /* Bold word starts (text-vide). */
-b.vide {
-  font-weight: 750;
-}
+b.vide { font-weight: 600; }
 
 /* Comfortable reading measure for answer text. */
-.measure {
-  max-width: 68ch;
-}
+.measure { max-width: 68ch; }
 
 /* Long English source text inside cards should wrap, never overflow on phones. */
-.wrap-anywhere {
-  overflow-wrap: anywhere;
-}
+.wrap-anywhere { overflow-wrap: anywhere; }
 
-.step-done .step-action {
-  text-decoration: line-through;
-  opacity: 0.6;
+.step-done .step-action { text-decoration: line-through; opacity: 0.6; }
+
+.td-figure { font-family: var(--font-outlier); font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }

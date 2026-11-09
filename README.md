@@ -4,7 +4,7 @@
 
 TraceDesk Lite is a help-desk assistant for student organisations, designed for readers who find long, dense text hard to act on. That includes people with ADHD or other attention, reading or executive-function difficulties, and people reading English as a second language. It answers only from the organisation's current documents. Every sentence and every checklist step must quote those documents, and the server checks each quote word for word before anything is shown.
 
-> Status: working prototype, v0.3 (November 2026). The demo uses a **fictional** club called “DemoClub”. Its documents are not a real service or policy.
+> Status: working prototype, v0.4 (November 2026). The demo uses a **fictional** club called “DemoClub”. Its documents are not a real service or policy.
 
 ## The problem
 
@@ -16,7 +16,11 @@ Practical student information (deadlines, eligibility, how to cancel, who to con
 
 An AI summary could help, but a fluent summary that invents or shifts a deadline does the most harm to exactly the people who rely on it. TraceDesk's rule is: **read less, but never be misled.**
 
-## The reader's side: the help desk (`/`)
+## The cover (`/`)
+
+The first screen says what the product does and lets you try it in one click. A short scene plays once on a paper desk: a real rule from the demo documents is underlined, an index card slides out with the one-sentence answer, a checklist step is ticked, and a "Quote verified" stamp is pressed in. With reduced motion turned on, the finished scene is shown at once. Below it: the same rule as a dense paragraph and as an answer, the measured results, the reading features, the organiser dashboard, what it needs to run, and real example questions that open the help desk with the question already asked.
+
+## The reader's side: the help desk (`/#/ask`)
 
 **One language at a time.** A 中文 / EN switch changes every label, button, hint and example question, and the choice is remembered. The answer comes back in the language of the question. The only English that stays in the Chinese interface is the source quotes, and they are labelled “English, not translated” so readers know why.
 
@@ -31,7 +35,7 @@ An AI summary could help, but a fluent summary that invents or shifts a deadline
    - Each step names the document it comes from, and the whole list can be copied in one click.
    - **Deadlines are double-checked.** Every number in a step's deadline (day, year, hour, minute) must also appear in that step's verified quote, even when the answer is in Chinese and the source in English. A deadline that fails is shown in red with a warning.
 4. **③ More detail**, folded by default.
-5. **④ Evidence.** Quotes grouped by document, highlighted inside the original paragraph, with a “Quotes verified 3/3” badge.
+5. **④ Evidence.** Quotes grouped by document and underlined inside the original paragraph, with a “Quotes verified 3/3” tag.
 6. **Report a problem** or **ask the organisers to add this**.
 
 **Reading settings** (one drawer, remembered in the browser):
@@ -40,7 +44,7 @@ An AI summary could help, but a fluent summary that invents or shifts a deadline
 - **Text size**: standard, large or extra large.
 - **Bold word starts** for English text. Some readers find this easier to follow; the evidence is mixed, so it is off by default.
 - **Reading speed** for Listen, which uses the browser's own voices at no extra cost.
-- **Colour scheme**: follow the device, light or dark.
+- **Colour scheme**: light (the default), dark, or follow the device.
 
 **Recent questions** stay in a side panel for the current browser tab, so an answer is not lost after a second question. Opening the dashboard and coming back keeps them too.
 
@@ -84,17 +88,18 @@ web/ (React + Mantine, built to web/dist)  ──POST /api/ask──►  server.
 - **Key handling.** The API key is read only from `app/.env`, never from system environment variables, and is never sent to the browser.
 - **Logging.** Every run records the model, prompt version, knowledge version, latency, token usage and verification results.
 - **Interface.** A single-page React app. Every piece of interface text lives in two language files (`web/src/locales/en.ts`, `zh.ts`); none is written into the components. The dashboard and its charts are only downloaded when an organiser opens it.
+- **Visual design.** One system across the cover, the help desk and the dashboard: warm paper, cotton stationery, letterpress-card controls, General Sans with Noto Sans SC for Chinese, and one coral ink kept for the verified state, focus and links. Colours are OKLCH tokens checked for contrast. Motion is limited to the cover's one scene and short state changes (a press, an arriving answer), all under 300 ms except the scene, and none under reduced motion.
 
 ## Measured so far (real model runs, 2026-11-09)
 
 | What | Result |
 | --- | --- |
-| Real model calls | 172, all successful: 20 smoke-test calls, 30 questions typed into the app and 122 evaluation calls. These are demo questions only, so this is not an accuracy evaluation. |
-| Quotes and steps that failed verification | 0 across all 172 calls |
+| Real model calls | 214, all successful: 20 smoke-test calls, 72 questions typed into the app (including the ones used for screenshots) and 122 evaluation calls. These are demo questions only, so this is not an accuracy evaluation. |
+| Quotes and steps that failed verification | 0 across all 214 calls |
 | Expected outcome matched (smoke cases TD-001, 018, 021, 029, 033, 037, 040) | 7 of 7 |
-| Median / max response time | 2.9 s / 6.6 s |
-| Total cost of all 172 calls | about US$0.10 |
-| Automated accessibility check (axe-core 4.10.2, WCAG 2.2 A/AA rules plus best practices) | 0 violations on the help desk with an answer shown and on all five dashboard sections; checked in Chinese and English, light and dark, at desktop and 375 px phone width |
+| Median / max response time | 3.4 s / 10.6 s |
+| Total cost of all 214 calls | about US$0.13 |
+| Automated accessibility check (axe-core 4.10.2, WCAG 2.2 A/AA rules plus best practices) | 0 violations on the cover, the help desk with an answer shown and all five dashboard sections; checked in Chinese and English, light and dark, at desktop and 375 px phone width, with no sideways scrolling |
 | 40-question prompt comparison (promptfoo): plain prompt vs TraceDesk prompt, same model, documents, schema and server checks | On the 20 held-out questions, all automatic checks passed for **20/20** with the TraceDesk prompt (v2.4) vs **17/20** with the plain prompt. The earlier run (v2.3) scored 19/20 vs 15/20. The plain prompt scored 15 and then 17 on the same questions, so a gap of a few questions can be run-to-run noise. Every remaining difference is checklist deadlines the quoted text did not state. The TraceDesk prompt costs about 40% more per question and is about 1.6 s slower (median). Automatic checks only, so this is not an accuracy figure. Details: `EVALUATION.md`. |
 
 ## Run it locally (Windows, macOS or Linux)
@@ -106,7 +111,7 @@ cd app
 npm install
 copy .env.example .env        # macOS/Linux: cp .env.example .env
 # open .env and paste your key after ANTHROPIC_API_KEY=
-npm start                     # then open http://localhost:3000 (dashboard: http://localhost:3000/#/organiser)
+npm start                     # then open http://localhost:3000 (help desk: /#/ask, dashboard: /#/organiser)
 ```
 
 The built interface (`app/web/dist`) is included, so no build step is needed to run the app.
@@ -131,7 +136,7 @@ npm run build    # type-check and rebuild app/web/dist
 | Date (MYT) | Work |
 | --- | --- |
 | 2026-11-03 | The fictional DemoClub knowledge base (`data/knowledge.json`) and a set of draft test questions. No application code. |
-| 2026-11-09 onward | Everything in `app/`: the server, quote and deadline verification, the accessibility features, the tests and the smoke script. The web interface was first written in plain HTML and rebuilt the same day in React with Mantine, after trying it ourselves showed mixed languages, unclear labels and ungrouped examples. |
+| 2026-11-09 onward | Everything in `app/`: the server, quote and deadline verification, the accessibility features, the tests and the smoke script. The web interface was first written in plain HTML and rebuilt the same day in React with Mantine, after trying it ourselves showed mixed languages, unclear labels and ungrouped examples. Later the same day we added the cover and gave the whole interface one visual system. |
 
 **AI assistance.** The fictional documents and the draft questions were written with AI help. The application code was written with an AI coding assistant (Claude Code) under the team's direction.
 
@@ -140,6 +145,7 @@ npm run build    # type-check and rebuild app/web/dist
 - Interface: React, Mantine (components, charts, notifications), Recharts, Tabler Icons, i18next, Vite.
 - Read-aloud uses easy-speech; bold word starts uses text-vide.
 - The answer-style rules are adapted from i-have-adhd.
+- Design: the visual system is the "Coral" theme of the Hallmark design skill (MIT), chosen from three it offered; motion follows Emil Kowalski's design-engineering skills (MIT); Impeccable's quality rules (Apache-2.0) were used as a final checklist. Fonts: General Sans (Fontshare), Geist Mono and Noto Sans SC (both OFL).
 
 ## Known limitations
 
@@ -148,4 +154,5 @@ npm run build    # type-check and rebuild app/web/dist
 - **Small fictional demo.** The demo has four short fictional documents. Results on it say nothing about accuracy on real material.
 - **Automated accessibility checks are not enough.** An automated checker catches only part of the problems. Screen-reader and keyboard-only testing by real users has not been done.
 - **Read-aloud depends on the browser.** The voices available depend on the browser and operating system.
+- **Fonts load from Fontshare and Google Fonts.** Offline, the page falls back to the system sans-serif.
 - **Single-user local prototype.** There are no accounts, the rate limit is in memory, and there is no public deployment. The dashboard has no login, which is acceptable only because the server listens on this computer alone (127.0.0.1).

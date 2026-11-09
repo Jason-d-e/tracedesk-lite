@@ -8,7 +8,7 @@ export default function SettingsDrawer({ opened, onClose }: { opened: boolean; o
   const { colorScheme, setColorScheme } = useMantineColorScheme()
 
   return (
-    <Drawer opened={opened} onClose={onClose} title={<Text fw={700} size="lg">{t('settings.title')}</Text>} position="right" size="sm" padding="lg">
+    <Drawer opened={opened} onClose={onClose} title={<Text fw={600} size="lg">{t('settings.title')}</Text>} position="right" size="sm" padding="lg">
       <Stack gap="xl">
         <Text size="sm" c="dimmed">{t('settings.intro')}</Text>
 

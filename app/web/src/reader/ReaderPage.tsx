@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  Alert, AppShell, Box, Button, Card, Container, Grid, Group, Paper, Skeleton, Stack, Tabs, Text, Textarea, Title, UnstyledButton,
+  Alert, AppShell, Box, Button, Card, Container, Grid, Group, Skeleton, Stack, Tabs, Text, Textarea, Title, UnstyledButton,
 } from '@mantine/core'
 import {
   IconAlertTriangle, IconCalendarEvent, IconClipboardList, IconFlask, IconHistory, IconInfoCircle, IconLifebuoy, IconSend, IconUserCheck,
@@ -66,6 +66,22 @@ export default function ReaderPage() {
     void ask({ question: q })
   }
 
+  // A question handed over from the cover (#/ask?q=...) is asked once, then the address is tidied.
+  useEffect(() => {
+    const take = () => {
+      const m = window.location.hash.match(/^#\/ask\?q=(.+)$/)
+      if (!m) return
+      const q = decodeURIComponent(m[1])
+      window.history.replaceState(null, '', '#/ask')
+      setQuestion(q)
+      void ask({ question: q })
+    }
+    take()
+    window.addEventListener('hashchange', take)
+    return () => window.removeEventListener('hashchange', take)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   function errorMessage(err: ApiError) {
     if (err.code === 'network') return t('errors.network')
     if (err.code === 'model_not_configured') return t('errors.model_not_configured')
@@ -83,12 +99,12 @@ export default function ReaderPage() {
           <Grid gap="xl">
             <Grid.Col span={{ base: 12, md: prefs.focus ? 12 : 8 }}>
               <Stack gap="lg">
-                <Alert variant="light" color="yellow" icon={<IconInfoCircle />} className="hide-in-focus" p="sm">
+                <Alert icon={<IconInfoCircle />} className="hide-in-focus" p="sm">
                   <Text size="sm">{t('app.demo')}</Text>
                 </Alert>
 
                 {/* 1. Ask */}
-                <Card withBorder radius="lg" padding="xl" shadow="sm">
+                <Card radius="md" padding="xl">
                   <Stack gap="sm">
                     <Title order={1} size="h2">{t('ask.title')}</Title>
                     <Text c="dimmed">{t('ask.subtitle')}</Text>
@@ -109,9 +125,10 @@ export default function ReaderPage() {
                       maxLength={500}
                     />
                     <Group justify="space-between">
-                      <Text size="xs" c="dimmed">
-                        {t('ask.counter', { count: question.length })} · {t('ask.shortcut')}
-                      </Text>
+                      <Group gap="md">
+                        <Text size="xs" c="dimmed" className="td-figure">{t('ask.counter', { count: question.length })}</Text>
+                        <Text size="xs" c="dimmed" visibleFrom="sm">{t('ask.shortcut')}</Text>
+                      </Group>
                       <Button size="md" leftSection={<IconSend size={18} />} onClick={() => submit()} loading={busy}>
                         {t('ask.submit')}
                       </Button>
@@ -122,7 +139,7 @@ export default function ReaderPage() {
                 {/* 2. Suggestions, grouped by topic */}
                 <Box className="hide-in-focus">
                   <Text fw={600} mb="xs">{t('ask.suggestionsTitle')}</Text>
-                  <Tabs defaultValue="dates" variant="pills" radius="xl">
+                  <Tabs defaultValue="dates" variant="pills" radius="md">
                     <Tabs.List mb="sm">
                       {TOPICS.map(({ key, icon: Icon }) => (
                         <Tabs.Tab key={key} value={key} leftSection={<Icon size={16} />}>
@@ -137,8 +154,8 @@ export default function ReaderPage() {
                           {(t(`topics.${key}.questions`, { returnObjects: true }) as string[]).map((q) => (
                             <Button
                               key={q}
-                              variant="light"
-                              radius="xl"
+                              variant="default"
+                              radius="md"
                               size="sm"
                               onClick={() => submit(q)}
                               disabled={busy}
@@ -157,7 +174,7 @@ export default function ReaderPage() {
                 {/* 3. Answer */}
                 <div ref={answerRef} aria-live="polite" aria-busy={busy}>
                   {active && !active.result && !active.error && (
-                    <Card withBorder radius="lg" padding="xl">
+                    <Card radius="md" padding="xl">
                       <Text fw={600}>{t('loading.title')}</Text>
                       <Text size="sm" c="dimmed" mb="md">{t('loading.hint')}</Text>
                       <Skeleton height={28} radius="sm" mb="sm" />
@@ -166,10 +183,10 @@ export default function ReaderPage() {
                     </Card>
                   )}
                   {active?.error && (
-                    <Alert color="red" variant="light" icon={<IconAlertTriangle />} title={t('errors.title')} role="alert">
+                    <Alert color="red" icon={<IconAlertTriangle />} title={t('errors.title')} role="alert">
                       <Text size="sm" mb={active.error.retryable === false ? 0 : 'sm'}>{errorMessage(active.error)}</Text>
                       {active.error.retryable !== false && (
-                        <Button size="xs" variant="white" color="red" onClick={() => ask(active.payload)}>
+                        <Button size="xs" variant="default" onClick={() => ask(active.payload)}>
                           {t('errors.retry')}
                         </Button>
                       )}
@@ -194,7 +211,7 @@ export default function ReaderPage() {
             {/* 4. Recent questions */}
             {!prefs.focus && (
               <Grid.Col span={{ base: 12, md: 4 }} className="hide-in-focus">
-                <Paper withBorder radius="lg" p="md" pos="sticky" top={80}>
+                <Box className="td-well" p="md" pos="sticky" top={80}>
                   <Group gap="xs" mb={4}>
                     <IconHistory size={18} />
                     <Text fw={600}>{t('history.title')}</Text>
@@ -209,7 +226,8 @@ export default function ReaderPage() {
                           key={x.id}
                           onClick={() => setActiveId(x.id)}
                           p="xs"
-                          style={{ borderRadius: 8, background: x.id === activeId ? 'var(--mantine-color-teal-light)' : undefined }}
+                          pl="sm"
+                          className="td-history-item"
                           aria-current={x.id === activeId}
                         >
                           <Text size="sm" lineClamp={2}>{x.payload.question}</Text>
@@ -220,7 +238,7 @@ export default function ReaderPage() {
                       ))}
                     </Stack>
                   )}
-                </Paper>
+                </Box>
               </Grid.Col>
             )}
           </Grid>
