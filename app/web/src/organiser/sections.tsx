@@ -336,7 +336,7 @@ export function Quality() {
         <Stat label={`${t('organiser.quality.cost')}${t('punct.colon')}${t('organiser.quality.ours')}`} value={cents(q.cost_per_question_usd.ours)} icon={<IconCircleCheck />} color="ink" />
         <Stat label={`${t('organiser.quality.latency')}${t('punct.colon')}${t('organiser.quality.ours')}`} value={`${q.median_latency_s.ours} s`} icon={<IconClock />} color="ink" />
       </SimpleGrid>
-      <Alert icon={<IconAlertCircle />}>{t('organiser.quality.note')} ({q.run_date})</Alert>
+      <Text size="xs" c="dimmed">{t('organiser.quality.note')} ({q.run_date})</Text>
     </Stack>
   )
 }

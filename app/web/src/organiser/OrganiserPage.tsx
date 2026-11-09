@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Alert, AppShell, Container, NavLink, Stack, Text, Title } from '@mantine/core'
+import { AppShell, Container, NavLink, Stack, Text, Title } from '@mantine/core'
 import { useDisclosure, useMediaQuery } from '@mantine/hooks'
 import { IconArrowLeft, IconBooks, IconChartBar, IconInbox, IconInfoCircle, IconLayoutDashboard, IconPuzzle } from '@tabler/icons-react'
 import TopBar from '../components/TopBar'
@@ -42,6 +42,7 @@ export default function OrganiserPage({ section }: { section: string }) {
             />
           ))}
           <NavLink href="#/ask" label={t('organiser.back')} leftSection={<IconArrowLeft size={18} />} mt="md" style={{ borderRadius: 8 }} />
+          <NavLink href="#/about" label={t('app.about')} leftSection={<IconInfoCircle size={18} />} style={{ borderRadius: 8 }} />
         </Stack>
       </AppShell.Navbar>
 
@@ -52,9 +53,6 @@ export default function OrganiserPage({ section }: { section: string }) {
               <Title order={1} size="h2">{t(`organiser.nav.${current.key}`)}</Title>
               <Text c="dimmed">{t('organiser.subtitle')}</Text>
             </div>
-            <Alert icon={<IconInfoCircle />} p="xs">
-              <Text size="sm">{t('organiser.localNote')}</Text>
-            </Alert>
             <Comp />
           </Stack>
         </Container>

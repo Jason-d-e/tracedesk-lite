@@ -56,7 +56,7 @@
 .hm-bar .btn { min-height: 40px; padding-inline: var(--space-md); }
 
 /* ---------- Hero: Stage, the desk on seven columns ---------- */
-.hm-hero { min-height: calc(100svh - 112px); display: grid; align-items: center; padding-block: var(--space-xl) var(--space-2xl); }
+.hm-hero { min-height: calc(100svh - 72px); display: grid; align-items: center; padding-block: var(--space-xl) var(--space-2xl); }
 .hm-hero-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-3xl); align-items: center; }
 .hm-hero-text { display: grid; gap: var(--space-lg); justify-items: start; }
 .hm-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xs); }
@@ -161,6 +161,21 @@
 .hm-footer-links a { text-decoration: none; padding-block: 2px; }
 .hm-footer-links a:hover { text-decoration: underline; text-decoration-color: var(--color-accent-2); }
 
+/* Footnotes (as product pages do): a small marker on the claim, the note in the footer. */
+.hm-sup { font-size: 0.4em; vertical-align: super; margin-left: 0.15em; font-family: var(--font-body); }
+.hm-sup a { text-decoration: none; color: var(--color-muted); }
+.hm-sup a:hover { color: var(--color-ink); text-decoration: underline; }
+.hm-footer-text { grid-column: 1 / 8; display: grid; gap: var(--space-md); }
+.hm-footer-text p { color: var(--color-ink-2); max-width: 64ch; }
+.hm-footer-text .small { color: var(--color-muted); }
+
+/* About: one long, quiet document page. */
+.hm-about { display: grid; gap: var(--space-xl); max-width: 68ch; }
+.hm-about h1 { font-size: var(--text-display-s); max-width: 20ch; }
+.hm-about section { display: grid; gap: var(--space-sm); padding-top: var(--space-lg); border-top: 1px solid var(--color-rule); }
+.hm-about h2 { font-size: var(--text-title); max-width: 40ch; letter-spacing: -0.015em; }
+.hm-about p { color: var(--color-ink-2); font-size: var(--text-lg); line-height: 1.6; max-width: 64ch; }
+
 /* ---------- Under 60rem every composition stacks in reading order ---------- */
 @media (max-width: 60rem) {
   .hm-links { display: none; }
@@ -179,7 +194,7 @@
   .hm-panel-shot { display: block; border-radius: var(--radius-card); overflow: hidden; box-shadow: var(--edge-stock), var(--cast-stock); margin-top: var(--space-sm); }
   .hm-row { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-xs); }
   .hm-row h3, .hm-row p { grid-column: 1 / -1; }
-  .hm-footer-grid > p, .hm-footer-links { grid-column: 1 / -1; }
+  .hm-footer-grid > p, .hm-footer-text, .hm-footer-links { grid-column: 1 / -1; }
   .hm-ba-sheet { max-height: none; padding: var(--space-lg); }
 }
 @media (max-width: 40rem) {

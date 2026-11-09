@@ -4,7 +4,7 @@ import {
   Alert, AppShell, Box, Button, Card, Container, Grid, Group, Skeleton, Stack, Tabs, Text, Textarea, Title, UnstyledButton,
 } from '@mantine/core'
 import {
-  IconAlertTriangle, IconCalendarEvent, IconClipboardList, IconFlask, IconHistory, IconInfoCircle, IconLifebuoy, IconSend, IconUserCheck,
+  IconAlertTriangle, IconCalendarEvent, IconClipboardList, IconFlask, IconHistory, IconLifebuoy, IconSend, IconUserCheck,
 } from '@tabler/icons-react'
 import TopBar from '../components/TopBar'
 import AnswerCard from './AnswerCard'
@@ -99,10 +99,6 @@ export default function ReaderPage() {
           <Grid gap="xl">
             <Grid.Col span={{ base: 12, md: prefs.focus ? 12 : 8 }}>
               <Stack gap="lg">
-                <Alert icon={<IconInfoCircle />} className="hide-in-focus" p="sm">
-                  <Text size="sm">{t('app.demo')}</Text>
-                </Alert>
-
                 {/* 1. Ask */}
                 <Card radius="md" padding="xl">
                   <Stack gap="sm">
@@ -135,6 +131,11 @@ export default function ReaderPage() {
                     </Group>
                   </Stack>
                 </Card>
+                {/* The one caveat, where mature assistants put it: a quiet line under the box you type in. */}
+                <Text size="xs" c="dimmed" ta="center" mt={-8}>
+                  {t('app.caveat')}{' '}
+                  <a href="#/about" className="td-link">{t('app.about')}</a>
+                </Text>
 
                 {/* 2. Suggestions, grouped by topic */}
                 <Box className="hide-in-focus">
@@ -242,7 +243,6 @@ export default function ReaderPage() {
               </Grid.Col>
             )}
           </Grid>
-          <Text size="xs" c="dimmed" ta="center" mt="xl" className="hide-in-focus">{t('app.footer')}</Text>
         </Container>
       </AppShell.Main>
     </AppShell>

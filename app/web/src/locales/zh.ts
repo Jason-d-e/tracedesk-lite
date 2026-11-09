@@ -9,8 +9,8 @@ const zh: Messages = {
     navAsk: '提问',
     navOrganiser: '组织者后台',
     language: '语言',
-    demo: '演示数据："DemoClub" 是为这个原型虚构的学生社团，相关资料不代表任何真实服务或规定。',
-    footer: '回答仍可能出错，行动前请先核对引用的原文。本工具不是医疗工具，也不收集任何健康信息。',
+    caveat: 'TraceDesk 也可能出错，行动前请看一眼引用的原文。',
+    about: '关于这个演示',
     model: { connected: 'AI 已连接', offline: 'AI 未连接', unreachable: '无法连接服务器' },
   },
   settings: {
@@ -130,7 +130,6 @@ const zh: Messages = {
   organiser: {
     title: '组织者后台',
     subtitle: '看读者在问什么、资料缺什么、回答质量怎么样。',
-    localNote: '本地原型：后台没有登录功能，只在这台电脑上运行。',
     nav: { overview: '总览', queue: '读者反馈', gaps: '资料缺口', docs: '资料库', quality: '回答质量' },
     back: '回到提问页',
     overview: {
@@ -184,7 +183,7 @@ const zh: Messages = {
       chart: '最近一次运行：{{n}} 道检查题中，通过各项自动检查的比例（%）',
       plain: '简单提示词',
       ours: 'TraceDesk 提示词',
-      note: '这些只是在一小份虚构数据上的自动检查，不是准确率；事实是否正确仍需要人工审核。',
+      note: '这是自动检查，不是准确率；事实是否正确仍需要人工审核。',
       metrics: {
         status_correct: '回答类型正确',
         quotes_verified: '引文全部核对通过',
@@ -201,7 +200,6 @@ const zh: Messages = {
     },
   },
   cover: {
-    banner: '可运行的原型。演示资料来自虚构的学生社团 DemoClub。不是医疗工具。',
     nav: { how: '它怎么工作', organisers: '给组织者', start: '开始提问' },
     hero: {
       title: '读得更少，|绝不被误导。',
@@ -235,7 +233,8 @@ const zh: Messages = {
         { value: '20/20', label: '道检查题全部通过自动检查；普通提示词是 17/20' },
         { value: '0', label: '个自动无障碍检测问题（WCAG 2.2 AA，中英文界面）' },
       ],
-      note: '以上是 2026 年 11 月 9 日在虚构演示数据上的自动检查，不是准确率；也还没有请 ADHD 读者实际试用。',
+      note: '2026 年 11 月 9 日在演示资料上的自动检查结果，不是准确率。',
+      noteLabel: '注释 1',
     },
     moments: {
       title: '为容易分心的人设计。',
@@ -273,9 +272,21 @@ const zh: Messages = {
       questions: ['怎么取消报名？', '讲师是谁？', '那个链接多久失效？'],
     },
     footer: {
-      colophon: 'TraceDesk Lite 是 2026 年 11 月为 Ctrl+V 和 LaunchPad 黑客松做的原型，由我们团队在 AI 编程助手的协助下完成。资料描述的是一个虚构社团。它不是医疗工具，也不记录任何健康信息。',
-      links: { ask: '帮助台', organiser: '组织者后台', source: '源代码', evaluation: '评测简报' },
+      colophon: 'TraceDesk Lite 于 2026 年 11 月为 Ctrl+V 和 LaunchPad 黑客松而做。',
+      links: { ask: '帮助台', organiser: '组织者后台', about: '关于这个演示', source: '源代码', evaluation: '评测简报' },
     },
+  },
+  about: {
+    title: '关于这个演示',
+    back: '回到封面',
+    sections: [
+      { title: '你看到的是什么', text: 'TraceDesk Lite 是一个可以运行的原型。它根据 DemoClub 的资料回答问题；DemoClub 是为这个演示虚构的学生社团，里面的活动、日期和联系方式都不是真的。' },
+      { title: '答案怎么核对', text: '每句话都必须引用当前有效的资料，服务器会逐字核对每条引文；核对不上的答案会被拦下。自动检查不等于准确率：引文是否完全支撑一句话，仍需要人来判断。' },
+      { title: '它不是什么', text: '它不是医疗工具，不会询问也不会保存任何健康信息。它还没有请 ADHD 读者实际试用过；设计依据的是 W3C 的认知无障碍指南。' },
+      { title: '你的数据', text: '提问只记录在运行 TraceDesk 的那台电脑上。只有你勾选同意后，报告才会交给组织者。组织者后台没有登录功能，因为它只在那台电脑上运行。' },
+      { title: '开源', text: '代码、评测简报和复用组件清单都已公开。' },
+    ],
+    source: 'GitHub 上的源代码',
   },
 }
 

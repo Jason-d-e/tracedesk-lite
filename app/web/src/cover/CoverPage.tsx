@@ -165,9 +165,6 @@ export default function CoverPage() {
 
   return (
     <div className="hm">
-      <header>
-        <p className="hm-banner"><span className="container" style={{ display: 'block' }}>{t('cover.banner')}</span></p>
-      </header>
       <nav className="hm-bar" data-hidden={hidden} aria-label="TraceDesk">
         <div className="container hm-bar-inner">
           <Logo />
@@ -218,12 +215,11 @@ export default function CoverPage() {
             <div className="hm-figures">
               {figures.map((f, i) => (
                 <div key={i}>
-                  <span className="fig">{f.value}</span>
+                  <span className="fig">{f.value}{i < 2 && <sup className="hm-sup"><a href="#hm-notes" aria-label={t('cover.figures.noteLabel')}>1</a></sup>}</span>
                   <p>{f.label}</p>
                 </div>
               ))}
             </div>
-            <p className="small hm-figures-note">{t('cover.figures.note')}</p>
           </div>
         </section>
 
@@ -306,10 +302,14 @@ export default function CoverPage() {
 
       <footer className="hm-footer">
         <div className="container hm-footer-grid">
-          <p>{t('cover.footer.colophon')}</p>
+          <div className="hm-footer-text">
+            <p>{t('cover.footer.colophon')}</p>
+            <p id="hm-notes" className="small"><sup>1</sup> {t('cover.figures.note')}</p>
+          </div>
           <nav className="hm-footer-links" aria-label={t('cover.footer.links.source')}>
             <a href="#/ask">{t('cover.footer.links.ask')}</a>
             <a href="#/organiser">{t('cover.footer.links.organiser')}</a>
+            <a href="#/about">{t('cover.footer.links.about')}</a>
             <a href={REPO} rel="noreferrer">{t('cover.footer.links.source')}</a>
             <a href={`${REPO}/blob/main/EVALUATION.md`} rel="noreferrer">{t('cover.footer.links.evaluation')}</a>
           </nav>

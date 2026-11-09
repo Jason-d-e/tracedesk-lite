@@ -108,6 +108,10 @@ body { font-synthesis: none; -webkit-font-smoothing: antialiased; }
 .td-history-item[aria-current='true'] { background: var(--color-cotton); box-shadow: var(--edge-stock), var(--cast-stock); }
 .td-history-item[aria-current='true'] p:first-child { font-weight: 600; }
 
+/* Inline links in quiet text: underlined, ink. */
+.td-link { color: inherit; text-decoration: underline; text-underline-offset: 0.18em; }
+.td-link:hover { text-decoration-color: var(--color-accent-2); }
+
 /* Focus mode: keep only the question and the answer, calmer and larger. */
 body.focus-mode .hide-in-focus { display: none !important; }
 body.focus-mode * { animation: none !important; transition: none !important; }

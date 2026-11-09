@@ -7,8 +7,8 @@ const en = {
     navAsk: 'Ask a question',
     navOrganiser: 'Organiser dashboard',
     language: 'Language',
-    demo: 'Demo data: “DemoClub” is a fictional student club made up for this prototype. Its documents are not a real service or policy.',
-    footer: 'Answers can still be wrong. Check the quoted source before acting. Not a medical tool; no health information is collected.',
+    caveat: 'TraceDesk can be wrong. Check the quoted source before you act.',
+    about: 'About this demo',
     model: { connected: 'AI connected', offline: 'AI not connected', unreachable: 'Server not reachable' },
   },
   settings: {
@@ -128,7 +128,6 @@ const en = {
   organiser: {
     title: 'Organiser dashboard',
     subtitle: 'See what readers ask, what the documents are missing, and how good the answers are.',
-    localNote: 'Local prototype: this dashboard has no login and only runs on this computer.',
     nav: { overview: 'Overview', queue: 'Reader reports', gaps: 'Knowledge gaps', docs: 'Documents', quality: 'Answer quality' },
     back: 'Back to the help desk',
     overview: {
@@ -182,7 +181,7 @@ const en = {
       chart: 'Share of the {{n}} check questions that passed each automatic check (latest run, %)',
       plain: 'Plain prompt',
       ours: 'TraceDesk prompt',
-      note: 'Automatic checks only, on a small fictional dataset. This is not an accuracy figure; fact correctness still needs human review.',
+      note: 'Automatic checks, not an accuracy score: whether a fact is right still needs a human reviewer.',
       metrics: {
         status_correct: 'Right kind of reply',
         quotes_verified: 'Quotes verified',
@@ -199,7 +198,6 @@ const en = {
     },
   },
   cover: {
-    banner: 'A working prototype. The documents belong to DemoClub, a fictional student club. Not a medical tool.',
     nav: { how: 'How it works', organisers: 'For organisers', start: 'Start asking' },
     hero: {
       title: 'Read less.|Never be misled.',
@@ -233,7 +231,8 @@ const en = {
         { value: '20/20', label: 'check questions passing every automatic test, against 17/20 for a plain prompt' },
         { value: '0', label: 'automated accessibility violations at WCAG 2.2 AA, in both languages' },
       ],
-      note: 'Automatic checks on fictional demo data, 9 November 2026. Not an accuracy figure, and not yet tested with readers who have ADHD.',
+      note: 'Automatic checks on the demo documents, 9 November 2026. They are not an accuracy score.',
+      noteLabel: 'Note 1',
     },
     moments: {
       title: 'Built for a wandering mind.',
@@ -271,9 +270,21 @@ const en = {
       questions: ['How do I cancel my place?', 'Who is the instructor?', 'How long until that link expires?'],
     },
     footer: {
-      colophon: 'TraceDesk Lite is a prototype built in November 2026 for the Ctrl+V and LaunchPad hackathons, by our team with help from an AI coding assistant. Its documents describe a fictional club. It is not a medical tool and records no health information.',
-      links: { ask: 'Help desk', organiser: 'Organiser dashboard', source: 'Source code', evaluation: 'Evaluation brief' },
+      colophon: 'TraceDesk Lite was built in November 2026 for the Ctrl+V and LaunchPad hackathons.',
+      links: { ask: 'Help desk', organiser: 'Organiser dashboard', about: 'About this demo', source: 'Source code', evaluation: 'Evaluation brief' },
     },
+  },
+  about: {
+    title: 'About this demo',
+    back: 'Back to the cover',
+    sections: [
+      { title: 'What you are looking at', text: 'TraceDesk Lite is a working prototype. It answers from the documents of DemoClub, a student club made up for this demo, so its events, dates and contacts are not real.' },
+      { title: 'How answers are checked', text: 'Every sentence must quote the current documents, and the server checks each quote word for word. An answer it cannot verify is held back. Automatic checks are not an accuracy score: whether a quote fully supports a sentence still needs a person to judge.' },
+      { title: 'What it is not', text: 'It is not a medical tool, and it never asks for or keeps health information. It has not yet been tested with readers who have ADHD; its design follows the W3C guidance on cognitive accessibility.' },
+      { title: 'Your data', text: 'Questions are logged on the computer that runs TraceDesk. A report reaches the organisers only if you tick the consent box. The organiser dashboard has no login because it runs only on that computer.' },
+      { title: 'Open source', text: 'The code, the evaluation brief and the list of reused components are public.' },
+    ],
+    source: 'Source code on GitHub',
   },
 }
 
