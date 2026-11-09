@@ -5,6 +5,8 @@ import { APP_DIR, config, modelConfigured } from "./lib/config.js";
 import { loadKnowledge } from "./lib/knowledge.js";
 import { PROMPTS, DEFAULT_PROMPT_ID } from "./lib/prompts.js";
 import { answerQuestion, describeError } from "./lib/answer.js";
+import { answerLocally } from "./lib/local.js";
+import { draftEmail } from "./lib/email.js";
 import { logRun } from "./lib/runlog.js";
 import { readRuns, buildInsights } from "./lib/insights.js";
 import {
@@ -60,6 +62,8 @@ app.get("/api/status", (req, res) => {
     knowledge_version: kb.knowledgeVersion,
     prompt_version: DEFAULT_PROMPT_ID,
     active_chunks: kb.activeChunks.length,
+    // Two ways to answer: the model (needs a key) and the local engine (keywords and templates, no API).
+    engines: { model: modelConfigured(), local: true },
   });
 });
 
@@ -84,21 +88,19 @@ app.post("/api/ask", rateLimit, async (req, res) => {
   }
 
   const promptId = typeof body.prompt === "string" && PROMPTS[body.prompt] ? body.prompt : DEFAULT_PROMPT_ID;
-
-  if (!modelConfigured()) {
-    return res.status(503).json({
-      error: {
-        code: "model_not_configured",
-        retryable: false,
-        message: "No model is connected yet. Add ANTHROPIC_API_KEY to app/.env and restart the server.",
-      },
-    });
-  }
+  // Without a key every question goes to the local engine; with one, the reader chooses.
+  const engine = !modelConfigured() || body.engine === "local" ? "local" : "model";
 
   try {
-    const result = await answerQuestion(kb, { question, context, promptId });
+    const result = engine === "local" ? answerLocally(kb, { question, context }) : await answerQuestion(kb, { question, context, promptId });
+    // No answer from the documents: draft the email the reader would send to ask, with the documented contact.
+    if (result.status === "insufficient_evidence" || result.status === "withheld") {
+      // The local engine's explanation of itself does not belong in a letter; the model's note on what is missing does.
+      result.email = draftEmail({ question, missing_info: engine === "model" ? result.missing_info : "", kb });
+    }
     logRun({
       source: "web",
+      engine,
       question,
       context,
       status: result.status,

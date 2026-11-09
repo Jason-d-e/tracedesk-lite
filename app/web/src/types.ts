@@ -1,4 +1,6 @@
 export type Status = 'answered' | 'insufficient_evidence' | 'needs_clarification' | 'withheld'
+/** Who wrote the answer: the model (needs a key) or the local engine (keywords and templates, no API). */
+export type EngineName = 'model' | 'local'
 
 export interface Citation {
   source_id: string
@@ -18,6 +20,16 @@ export interface Step extends Citation {
   deadline_supported: boolean | null
 }
 
+/** The email the reader could send when the documents do not answer: a template, with the documented address. */
+export interface EmailDraft {
+  to: string
+  to_source: { source_id: string; title: string } | null
+  subject: string
+  body: string
+  mailto: string
+  note: string
+}
+
 export interface AnswerResult {
   status: Status
   model_status: string
@@ -28,11 +40,13 @@ export interface AnswerResult {
   clarifying_question: string
   citations: Citation[]
   checks: { citations_total: number; citations_verified: number; steps_total: number; steps_verified: number; withheld: boolean }
-  meta: { prompt_version: string; knowledge_version: string; model_served: string; model_requested: string; latency_ms: number; fallback_used?: boolean }
+  email?: EmailDraft
+  meta: { prompt_version: string; knowledge_version: string; model_served: string; model_requested: string; latency_ms: number; fallback_used?: boolean; engine?: EngineName }
 }
 
 export interface AskPayload {
   question: string
+  engine?: EngineName
   context?: { previous_question: string; clarifying_question: string }
 }
 
@@ -48,6 +62,7 @@ export interface StatusInfo {
   knowledge_version: string
   prompt_version: string
   active_chunks: number
+  engines?: Record<EngineName, boolean>
 }
 
 export interface DocSection { id: string; text: string }

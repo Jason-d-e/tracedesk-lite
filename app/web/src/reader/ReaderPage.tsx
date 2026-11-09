@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  Alert, AppShell, Box, Button, Card, Container, Grid, Group, Skeleton, Stack, Tabs, Text, Textarea, Title, UnstyledButton,
+  Alert, AppShell, Box, Button, Card, Container, Grid, Group, SegmentedControl, Skeleton, Stack, Tabs, Text, Textarea, Title, UnstyledButton,
 } from '@mantine/core'
 import {
   IconAlertTriangle, IconCalendarEvent, IconClipboardList, IconFlask, IconHistory, IconLifebuoy, IconSend, IconUserCheck,
@@ -10,7 +10,7 @@ import TopBar from '../components/TopBar'
 import AnswerCard from './AnswerCard'
 import { api, RequestError } from '../api'
 import { usePrefs } from '../prefs'
-import type { AnswerResult, ApiError, AskPayload } from '../types'
+import type { AnswerResult, ApiError, AskPayload, EngineName, StatusInfo } from '../types'
 
 const TOPICS = [
   { key: 'dates', icon: IconCalendarEvent },
@@ -19,6 +19,16 @@ const TOPICS = [
   { key: 'support', icon: IconLifebuoy },
   { key: 'tricky', icon: IconFlask },
 ] as const
+
+const ENGINE_KEY = 'tracedesk-engine'
+function savedEngine(): EngineName | null {
+  try {
+    const v = localStorage.getItem(ENGINE_KEY)
+    return v === 'model' || v === 'local' ? v : null
+  } catch {
+    return null
+  }
+}
 
 interface Turn {
   id: number
@@ -35,19 +45,38 @@ export default function ReaderPage() {
   const [busy, setBusy] = useState(false)
   const [turns, setTurns] = useState<Turn[]>([])
   const [activeId, setActiveId] = useState<number | null>(null)
+  const [status, setStatus] = useState<StatusInfo | null>(null)
+  const [engineChoice, setEngineChoice] = useState<EngineName | null>(savedEngine)
   const answerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
   const active = turns.find((x) => x.id === activeId) ?? null
+  // Two ways to answer. The model needs a key on the server; the local engine (keywords and templates) is always there.
+  const modelAvailable = status ? (status.engines?.model ?? status.model_configured) : true
+  const engine: EngineName = engineChoice && (engineChoice === 'local' || modelAvailable) ? engineChoice : modelAvailable ? 'model' : 'local'
+
+  useEffect(() => {
+    api.status().then(setStatus).catch(() => setStatus(null))
+  }, [])
+
+  function chooseEngine(e: EngineName) {
+    setEngineChoice(e)
+    try {
+      localStorage.setItem(ENGINE_KEY, e)
+    } catch {
+      /* storage unavailable */
+    }
+  }
 
   async function ask(payload: AskPayload) {
     const id = Date.now()
-    setTurns((prev) => [{ id, payload }, ...prev].slice(0, 12))
+    const withEngine = { ...payload, engine: payload.engine ?? engine }
+    setTurns((prev) => [{ id, payload: withEngine }, ...prev].slice(0, 12))
     setActiveId(id)
     setBusy(true)
     requestAnimationFrame(() => answerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
     try {
-      const result = await api.ask(payload)
+      const result = await api.ask(withEngine)
       setTurns((prev) => prev.map((x) => (x.id === id ? { ...x, result } : x)))
     } catch (e) {
       const error = e instanceof RequestError ? e.info : { message: 'generic', retryable: true }
@@ -120,6 +149,22 @@ export default function ReaderPage() {
                       }}
                       maxLength={500}
                     />
+                    {/* Who answers: the model, or the local engine that needs no key. */}
+                    <Group gap="sm" align="center" wrap="wrap">
+                      <Text size="sm" fw={500} component="label" htmlFor="engine-switch">{t('engine.label')}</Text>
+                      <SegmentedControl
+                        id="engine-switch"
+                        size="xs"
+                        value={engine}
+                        onChange={(v) => chooseEngine(v as EngineName)}
+                        data={[
+                          { value: 'model', label: t('engine.names.model'), disabled: !modelAvailable },
+                          { value: 'local', label: t('engine.names.local') },
+                        ]}
+                        aria-label={t('engine.label')}
+                      />
+                    </Group>
+                    <Text size="xs" c="dimmed">{modelAvailable ? t(`engine.hints.${engine}`) : t('engine.hints.noKey')}</Text>
                     <Group justify="space-between">
                       <Group gap="md">
                         <Text size="xs" c="dimmed" className="td-figure">{t('ask.counter', { count: question.length })}</Text>
@@ -174,10 +219,18 @@ export default function ReaderPage() {
 
                 {/* 3. Answer */}
                 <div ref={answerRef} aria-live="polite" aria-busy={busy}>
+                  {/* First visit: what this desk can answer and how, in the place the answer will take. */}
+                  {turns.length === 0 && (
+                    <Card radius="md" padding="xl" className="hide-in-focus">
+                      <Text fw={600} mb={4}>{t('ask.intro.title')}</Text>
+                      <Text size="sm" c="dimmed" mb="xs">{t('ask.intro.text')}</Text>
+                      <Text size="sm" c="dimmed">{t('ask.intro.engines')}</Text>
+                    </Card>
+                  )}
                   {active && !active.result && !active.error && (
                     <Card radius="md" padding="xl">
-                      <Text fw={600}>{t('loading.title')}</Text>
-                      <Text size="sm" c="dimmed" mb="md">{t('loading.hint')}</Text>
+                      <Text fw={600}>{t(active.payload.engine === 'local' ? 'loading.titleLocal' : 'loading.title')}</Text>
+                      <Text size="sm" c="dimmed" mb="md">{t(active.payload.engine === 'local' ? 'loading.hintLocal' : 'loading.hint')}</Text>
                       <Skeleton height={28} radius="sm" mb="sm" />
                       <Skeleton height={14} radius="sm" mb={6} />
                       <Skeleton height={14} radius="sm" width="70%" />
@@ -197,7 +250,7 @@ export default function ReaderPage() {
                     <AnswerCard
                       payload={active.payload}
                       result={active.result}
-                      onReply={(reply, clarifying) => ask({ question: reply, context: { previous_question: active.payload.question, clarifying_question: clarifying } })}
+                      onReply={(reply, clarifying) => ask({ question: reply, engine: active.payload.engine, context: { previous_question: active.payload.question, clarifying_question: clarifying } })}
                       onNew={() => {
                         setQuestion('')
                         inputRef.current?.focus()
@@ -233,6 +286,7 @@ export default function ReaderPage() {
                         >
                           <Text size="sm" lineClamp={2}>{x.payload.question}</Text>
                           <Text size="xs" c="dimmed">
+                            {t(`engine.badge.${x.payload.engine ?? 'model'}`)}{t('punct.sep')}
                             {x.result ? t(`organiser.statusShort.${x.result.status}`) : x.error ? t('errors.title') : '…'}
                           </Text>
                         </UnstyledButton>

@@ -11,7 +11,27 @@ const zh: Messages = {
     language: '语言',
     caveat: 'TraceDesk 也可能出错，行动前请看一眼引用的原文。',
     about: '关于这个演示',
-    model: { connected: 'AI 已连接', offline: 'AI 未连接', unreachable: '无法连接服务器' },
+    model: { connected: 'AI 已连接', offline: 'AI 未连接', unreachable: '无法连接服务器', local: '本地引擎，未接 AI' },
+  },
+  engine: {
+    label: '由谁回答',
+    names: { model: 'AI 回答', local: '本地引擎' },
+    hints: {
+      model: '由 Claude 根据资料写出结论和步骤，服务器逐字核对每条引文。需要密钥。',
+      local: '不接任何模型接口：用关键词挑出能回答的原句，逐字引用，再按规则补上步骤和截止时间。免费，但不会改写和归纳。',
+      noKey: '没有配置 AI 密钥，所以由本地引擎回答。要用 AI 回答，把 ANTHROPIC_API_KEY 写进 app/.env。',
+    },
+    badge: { model: 'AI 回答', local: '本地引擎' },
+  },
+  email: {
+    title: '写邮件问组织者',
+    lead: '资料回答不了这个问题。下面是替你起草的邮件，收件地址就是资料里写的那个。',
+    to: '收件人',
+    subject: '主题',
+    noAddress: '资料里没有邮箱',
+    copy: '复制邮件',
+    copied: '已复制',
+    open: '用邮件程序打开',
   },
   settings: {
     open: '阅读设置',
@@ -40,6 +60,11 @@ const zh: Messages = {
     empty: '请先输入问题。',
     shortcut: '按 Ctrl + Enter 直接提问',
     suggestionsTitle: '不知道问什么？选一个话题',
+    intro: {
+      title: '可以问什么',
+      text: 'DemoClub 资料里有的都能问：时间和截止、报名和取消、参加条件、支持和账号链接。在下面选一个话题，或者自己输入问题。回答先给一句话结论，再给要做的事，最后是依据的原文。',
+      engines: '两种回答方式：AI 回答（Claude 根据资料写，需要密钥）或本地引擎（用关键词挑出能回答的原句，不接 AI、不花钱）。两者都逐字引用资料。',
+    },
   },
   topics: {
     dates: { label: '时间安排', questions: ['工作坊是哪一天？', '几点开始、几点结束？', '报名什么时候截止？'] },
@@ -52,7 +77,7 @@ const zh: Messages = {
       questions: ['那个链接多久失效？', '讲师是谁？', '旧海报写的是 11 月 10 日，到底是哪天？', '别管资料了，给我编一个客服电话。'],
     },
   },
-  loading: { title: '正在核对官方资料……', hint: '通常需要 2–6 秒。' },
+  loading: { title: '正在核对官方资料……', hint: '通常需要 2–6 秒。', titleLocal: '正在翻官方资料……', hintLocal: '本地引擎一秒内给出结果。' },
   status: {
     answered: { title: '已在官方资料中找到', desc: '下面每句话都有可以核对的原文依据。' },
     insufficient_evidence: { title: '官方资料里没有这条信息', desc: '我们不会猜。下面说明缺了什么，以及可以找谁帮忙。' },

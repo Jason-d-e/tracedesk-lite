@@ -4,12 +4,12 @@ import {
   Accordion, Alert, Box, Button, Card, Checkbox, CopyButton, Divider, Group, Highlight, Stack, Text, Textarea,
 } from '@mantine/core'
 import {
-  IconAlertTriangle, IconCheck, IconCircleCheck, IconClock, IconCopy, IconFileText, IconFlag, IconHelpCircle, IconListDetails, IconMessageCircleQuestion,
-  IconPlayerStop, IconPlus, IconQuote, IconSearchOff, IconShieldX, IconVolume,
+  IconAlertTriangle, IconCheck, IconCircleCheck, IconClock, IconCopy, IconFileText, IconFlag, IconHelpCircle, IconListDetails, IconMailForward,
+  IconMessageCircleQuestion, IconPlayerStop, IconPlus, IconQuote, IconSearchOff, IconShieldX, IconVolume,
 } from '@tabler/icons-react'
 import { Readable, speak, stopSpeaking } from '../reading'
 import { usePrefs } from '../prefs'
-import type { AnswerResult, AskPayload, Citation, Status } from '../types'
+import type { AnswerResult, AskPayload, Citation, EmailDraft, Status } from '../types'
 import ReportModal from './ReportModal'
 import KeySentence from './KeySentence'
 
@@ -94,6 +94,38 @@ function Evidence({ g }: { g: SourceGroup }) {
   )
 }
 
+/** When the documents do not answer: the email the reader would send, drafted from the documents' own contact. Copy it or open it; nothing is sent from here. */
+function EmailDraftBox({ email }: { email: EmailDraft }) {
+  const { t } = useTranslation()
+  const text = `${t('email.to')}${t('punct.colon')}${email.to || t('email.noAddress')}
+${t('email.subject')}${t('punct.colon')}${email.subject}
+
+${email.body}`
+  return (
+    <Box className="td-well" p="md" mt="md" component="section" aria-labelledby="sec-email">
+      <Group gap={6} mb={4}>
+        <IconMailForward size={16} aria-hidden />
+        <Text component="h2" id="sec-email" size="sm" fw={600} m={0}>{t('email.title')}</Text>
+      </Group>
+      <Text size="sm" c="dimmed" mb="sm">{t('email.lead')}</Text>
+      <Text size="sm"><Text span fw={600}>{t('email.to')}{t('punct.colon')}</Text>{email.to || <Text span c="dimmed">{t('email.noAddress')}</Text>}</Text>
+      <Text size="sm" mb="xs"><Text span fw={600}>{t('email.subject')}{t('punct.colon')}</Text><span lang="en">{email.subject}</span></Text>
+      <Text size="sm" lang="en" className="td-quote" style={{ whiteSpace: 'pre-wrap' }} lh={1.6}>{email.body}</Text>
+      <Text size="xs" c="dimmed" mt="xs">{email.note}</Text>
+      <Group gap="xs" mt="sm">
+        <CopyButton value={text} timeout={2000}>
+          {({ copied, copy }) => (
+            <Button size="sm" variant="default" leftSection={copied ? <IconCheck size={16} /> : <IconCopy size={16} />} onClick={copy}>
+              {copied ? t('email.copied') : t('email.copy')}
+            </Button>
+          )}
+        </CopyButton>
+        <Button component="a" href={email.mailto} size="sm" variant="light" leftSection={<IconMailForward size={16} />}>{t('email.open')}</Button>
+      </Group>
+    </Box>
+  )
+}
+
 export default function AnswerCard({
   payload, result, onReply, onNew,
 }: {
@@ -152,6 +184,7 @@ export default function AnswerCard({
           <Group gap="sm" wrap="wrap">
             <span>{t(`status.${result.status}.title`)}</span>
             {result.status === 'answered' && <span className="td-stamp"><IconCheck size={12} aria-hidden />{t('answer.verified')}</span>}
+            <span className="td-tag">{t(`engine.badge.${result.meta.engine ?? 'model'}`)}</span>
           </Group>
         }
         mb="lg"
@@ -199,6 +232,8 @@ export default function AnswerCard({
           <Text size="sm"><Readable text={result.missing_info} bionic={prefs.bionic} /></Text>
         </Box>
       )}
+
+      {result.email && <EmailDraftBox email={result.email} />}
 
       {/* ② What to do: rows parted by hairlines */}
       {steps.length > 0 && (

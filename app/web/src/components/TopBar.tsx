@@ -8,7 +8,7 @@ import { api } from '../api'
 import SettingsDrawer from './SettingsDrawer'
 import Logo from './Logo'
 
-type ModelState = 'checking' | 'connected' | 'offline' | 'unreachable'
+type ModelState = 'checking' | 'connected' | 'offline' | 'unreachable' | 'local'
 
 export function LanguageSwitch() {
   const { t, i18n } = useTranslation()
@@ -31,7 +31,8 @@ export default function TopBar({ page, navOpened, onNavToggle }: { page: 'reader
   useEffect(() => {
     api
       .status()
-      .then((s) => setModel(s.model_configured ? 'connected' : 'offline'))
+      // Without a key the local engine answers, which is a state of its own, not a fault.
+      .then((s) => setModel(s.model_configured ? 'connected' : s.engines?.local ? 'local' : 'offline'))
       .catch(() => setModel('unreachable'))
   }, [])
 
@@ -49,8 +50,8 @@ export default function TopBar({ page, navOpened, onNavToggle }: { page: 'reader
       <Group gap="xs" wrap="nowrap">
         {model !== 'checking' && (
           <Group gap={6} visibleFrom="sm" className="hide-in-focus" wrap="nowrap">
-            {model === 'connected' ? <IconPlugConnected size={16} aria-hidden /> : <IconPlugConnectedX size={16} aria-hidden color="var(--mantine-color-red-light-color)" />}
-            <Text size="xs" c={model === 'connected' ? 'dimmed' : 'red'}>{t(`app.model.${model}`)}</Text>
+            {model === 'connected' || model === 'local' ? <IconPlugConnected size={16} aria-hidden /> : <IconPlugConnectedX size={16} aria-hidden color="var(--mantine-color-red-light-color)" />}
+            <Text size="xs" c={model === 'connected' || model === 'local' ? 'dimmed' : 'red'}>{t(`app.model.${model}`)}</Text>
           </Group>
         )}
         <LanguageSwitch />

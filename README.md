@@ -82,7 +82,8 @@ web/ (React + Mantine, built to web/dist)  ──POST /api/ask──►  server.
                                               └─ lib/reviews.js, lib/insights.js   reader reports and knowledge gaps
 ```
 
-- **Model call.** The server makes one Messages API call through the official Anthropic SDK. The model is `claude-haiku-5-5`, the cheapest current Claude model, at effort `medium`.
+- **Two engines.** With a key, the server makes one Messages API call through the official Anthropic SDK (`claude-haiku-5-5`, the cheapest current Claude model, at effort `medium`). Without a key, or when the reader picks **Local engine** on the help desk, `lib/local.js` answers the way help desks did before large language models: the question becomes keywords (English words lightly stemmed; Chinese phrases through a small glossary), every sentence of the active documents is scored by the keywords it contains, and the best sentence is the bottom line, quoted word for word. Sentences that read as instructions become checklist steps, with the deadline lifted from the same sentence. Two rules stay: it asks which link is meant, and it says "not covered" (with the documented contact) when nothing scores. It never paraphrases, combines or translates. Both engines go through the same verification.
+- **When the documents do not answer**, the help desk drafts the email the reader would send (`lib/email.js`): the documented support address, the question as asked, the documents read, and what the support guide asks a request to contain. Copy it or open it in a mail app; nothing is sent.
 - **Structured output.** A JSON schema limits every `source_id` to real, active sections.
 - **No retrieval layer.** The knowledge base is small, so all active sections go into the prompt; there is no vector search.
 - **Key handling.** The API key is read only from `app/.env`, never from system environment variables, and is never sent to the browser.
@@ -151,6 +152,7 @@ npm run build    # type-check and rebuild app/web/dist
 
 - **No user testing yet.** Nobody with ADHD has tried the app. It is *designed with* cognitive-accessibility guidance; we do not claim it is proven to help.
 - **The quote check has limits.** It proves the quoted text exists in the source. It does not prove the quote fully supports the sentence, which still needs human review. The deadline check compares numbers only.
+- **The local engine only selects sentences.** It cannot combine two sections into one answer, a Chinese question gets an English sentence under a Chinese lead-in, and a phrasing its glossary does not know comes back as "not covered". On the 34 demo questions it picked the right sentence for 29, asked back on 2 and said "not covered" on 3; a keyword can still land on the wrong sentence.
 - **Small fictional demo.** The demo has four short fictional documents. Results on it say nothing about accuracy on real material.
 - **Automated accessibility checks are not enough.** An automated checker catches only part of the problems. Screen-reader and keyboard-only testing by real users has not been done.
 - **Read-aloud depends on the browser.** The voices available depend on the browser and operating system.
