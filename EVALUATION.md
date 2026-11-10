@@ -43,6 +43,20 @@ No request failed in any run. The plain prompt is unchanged between the runs, ye
 2. **The prompt matters for deadlines.** The plain prompt attached deadlines that its quoted text did not state, for example "prepare your laptop before 19:00 on 12 November" when the document gives no such deadline. For a reader who struggles with time, that is the most harmful kind of error. Across the two runs TraceDesk did this once in 40 answers; the plain prompt did it eight times.
 3. **The cost is small.** The TraceDesk prompt is longer, so each question costs about 35–40% more and is about 1.6 s slower at the median.
 
+## Hand-scored review (11 November 2026)
+
+The automatic checks cannot see a wrong fact that is backed by a real quote, so all 40 answers from the stored run (dev and check sets, both prompts) were also scored by a person against the four documents.
+
+| Scored by hand | Plain | TraceDesk |
+| --- | --- | --- |
+| Facts right | 34/40 | 40/40 |
+| Bottom line faithful to the documents | not scored | 40/40 |
+
+- All 40 draft reference answers were confirmed right; none needed a correction.
+- The plain prompt's six wrong answers were of two kinds: a deadline the documents do not set (the registration deadline reused for preparing a laptop or for asking a question), and wrong statements about the outdated draft D04 (saying it does not exist, or that it does not mention 20 places). Three of these six passed every automatic check.
+- The automatic checks raised seven false alarms (five on plain answers, two on TraceDesk answers), mostly when a step quoted a sentence from a different paragraph of the same document.
+- One TraceDesk bottom line came back in English for a Chinese question. The facts were right; the language is a defect to fix.
+
 ## What the evaluation caught in our own code
 
 - **A real bug.** The deadline check compared digits only, so a correct Chinese date ("2026年11月12日") was flagged red against "12 November", because the source has no digit for the month. Earlier unit tests used 11 November, where day and month happen to match, so they missed it. The check now reads month names and number words, and accepts a year stated once in the same section. Regression tests were added.
@@ -51,7 +65,6 @@ No request failed in any run. The plain prompt is unchanged between the runs, ye
 
 ## Limits
 
-- 40 questions, fictional documents, and draft reference answers that have not yet been reviewed by a person.
-- The automatic checks cannot catch a wrong fact backed by a real quote. Fact correctness and how faithful the bottom line is need human scoring, which is pending.
+- 40 questions and fictional documents. The reference answers and all 80 answers were reviewed by one person; a second, independent scorer would make the hand scores firmer.
 - Nobody with ADHD has tested the app yet.
 - The results come from one model at one effort level, on one day, with two runs of the check set.
