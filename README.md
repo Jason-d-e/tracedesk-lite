@@ -1,8 +1,3 @@
-<p align="right">
-  <a href="README.md"><img alt="English" src="https://img.shields.io/badge/English-0969DA?style=for-the-badge"></a>
-  <a href="README.zh-CN.md"><img alt="简体中文" src="https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-8C959F?style=for-the-badge"></a>
-</p>
-
 # TraceDesk Lite
 
 **The bottom line first, a checklist you can tick, and a source for every word.**
