@@ -156,12 +156,25 @@ export function rank(sentences, { primary, secondary }, how) {
 }
 
 const texts = (zh) => ({
-  lead: (s) => (zh ? `根据《${s.title}》：${s.text}` : s.text),
   clarify: zh ? "你是指密码重置链接，还是研讨会的参会链接？" : "Do you mean the password reset link or the workshop joining link?",
-  missing: zh
-    ? "本地引擎没有在资料里找到能回答这个问题的句子。它只会摘录原句，不会撰写或推断。资料里给出的联系方式见下方。"
-    : "The local engine found no sentence in the documents that answers this. It only selects sentences from the documents; it does not write or guess. The documented contact is below.",
 });
+
+/**
+ * A checklist step from an instruction sentence, still in the document's own words: the instruction after
+ * "To cancel …," and without the deadline, which is shown beside it. "To cancel X, reply to the confirmation
+ * email before 11 November" becomes "Reply to the confirmation email."
+ */
+export function actionOf(sentence, deadline) {
+  let t = sentence;
+  const lead = t.match(/^To [^,]+,\s+(.+)$/);
+  if (lead) t = lead[1];
+  if (deadline) {
+    const at = t.indexOf(deadline);
+    if (at > 0) t = (t.slice(0, at).replace(/\s+(before|by|until)\s*$/, "") + t.slice(at + deadline.length)).trim();
+  }
+  t = t.replace(/[.\s]+$/, "") + ".";
+  return t[0].toUpperCase() + t.slice(1);
+}
 
 /**
  * Answer one question without a model. Same result shape as answerQuestion, so the interface and the checks
@@ -189,17 +202,24 @@ export function answerLocally(kb, { question, context = null }) {
       parsed = {
         status: "insufficient_evidence", key_point: "", answer: "", next_steps: [],
         citations: contact ? [{ source_id: contact.source_id, quote: contact.text }] : [],
-        missing_info: T.missing, clarifying_question: "",
+        // The status line already says the documents do not cover it; the engine has nothing to add about what is missing.
+        missing_info: "", clarifying_question: "",
       };
     } else {
       const same = ranked.filter((s) => s.source_id === best.source_id && s.score > 0 && s !== best).slice(0, 3);
       const steps = [best, ...same]
         .filter((s) => s.action)
         .slice(0, 3)
-        .map((s) => ({ action: s.text, deadline: (s.text.match(DEADLINE_RE) ?? [])[1] ?? "", source_id: s.source_id, quote: s.text }));
+        .map((s) => {
+          const deadline = (s.text.match(DEADLINE_RE) ?? [])[1] ?? "";
+          return { action: actionOf(s.text, deadline), deadline, source_id: s.source_id, quote: s.text };
+        })
+        // A step that only repeats the bottom line is not a step.
+        .filter((s) => s.action !== best.text);
       parsed = {
         status: "answered",
-        key_point: T.lead(best),
+        // The sentence itself, in the document's words; the interface shows which document it comes from.
+        key_point: best.text,
         answer: same.map((s) => s.text).join(" "),
         next_steps: steps,
         citations: [{ source_id: best.source_id, quote: best.text }],

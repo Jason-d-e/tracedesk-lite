@@ -17,18 +17,18 @@ const zh: Messages = {
     label: '由谁回答',
     names: { model: 'AI 回答', local: '本地引擎' },
     hints: {
-      model: '由 Claude 根据资料写出结论和步骤，服务器逐字核对每条引文。需要密钥。',
-      local: '不接任何模型接口：用关键词挑出能回答的原句，逐字引用，再按规则补上步骤和截止时间。免费，但不会改写和归纳。',
-      noKey: '没有配置 AI 密钥，所以由本地引擎回答。要用 AI 回答，把 ANTHROPIC_API_KEY 写进 app/.env。',
+      model: 'Claude 根据资料写出结论和步骤，每条引文逐字核对。',
+      local: '不用 AI：直接给出资料里最能回答的原句。免费。',
+      noKey: '没有配置 AI 密钥，现在由本地引擎回答。',
     },
     badge: { model: 'AI 回答', local: '本地引擎' },
   },
   email: {
     title: '写邮件问组织者',
-    lead: '资料回答不了这个问题。下面是替你起草的邮件，收件地址就是资料里写的那个。',
+    lead: '可以把这封邮件发给组织者。',
+    join: '',
     to: '收件人',
     subject: '主题',
-    noAddress: '资料里没有邮箱',
     copy: '复制邮件',
     copied: '已复制',
     open: '用邮件程序打开',
@@ -62,8 +62,7 @@ const zh: Messages = {
     suggestionsTitle: '不知道问什么？选一个话题',
     intro: {
       title: '可以问什么',
-      text: 'DemoClub 资料里有的都能问：时间和截止、报名和取消、参加条件、支持和账号链接。在下面选一个话题，或者自己输入问题。回答先给一句话结论，再给要做的事，最后是依据的原文。',
-      engines: '两种回答方式：AI 回答（Claude 根据资料写，需要密钥）或本地引擎（用关键词挑出能回答的原句，不接 AI、不花钱）。两者都逐字引用资料。',
+      text: 'DemoClub 资料里有的都能问：时间和截止、报名和取消、参加条件、支持和账号链接。在上面选一个话题，或者自己输入问题。',
     },
   },
   topics: {
@@ -80,7 +79,7 @@ const zh: Messages = {
   loading: { title: '正在核对官方资料……', hint: '通常需要 2–6 秒。', titleLocal: '正在翻官方资料……', hintLocal: '本地引擎一秒内给出结果。' },
   status: {
     answered: { title: '已在官方资料中找到', desc: '下面每句话都有可以核对的原文依据。' },
-    insufficient_evidence: { title: '官方资料里没有这条信息', desc: '我们不会猜。下面说明缺了什么，以及可以找谁帮忙。' },
+    insufficient_evidence: { title: '官方资料里没有这条信息', desc: '我们不会猜。下面是可以找的人，和一封写好的邮件。' },
     needs_clarification: { title: '先确认一个细节', desc: '你的问题可能有不止一种意思。' },
     withheld: { title: '答案已拦下', desc: 'AI 的回答无法和资料逐字对上，所以没有显示。可以换个问法再试。' },
   },
@@ -89,6 +88,7 @@ const zh: Messages = {
     factKinds: { date: '日期', time: '时间', place: '地点', contact: '联系方式' },
     youAsked: '你的问题',
     bottomLine: '一句话结论',
+    bottomLineLocal: '最能回答这个问题的原句',
     todo: '你需要做的事',
     todoHint: '做完一项就勾一项。',
     deadline: '截止时间',
@@ -113,6 +113,7 @@ const zh: Messages = {
     clarifyLabel: '你的回答',
     clarifySend: '发送',
     meta: '{{model}}，用时 {{seconds}} 秒',
+    metaLocal: '本地引擎，未使用 AI',
     newQuestion: '再问一个问题',
   },
   report: {
@@ -287,7 +288,7 @@ const zh: Messages = {
       items: [
         { title: '你当前有效的资料', text: '只有当前版本会交给模型；过期的旧稿会列出来，但不会被使用。' },
         { title: '一台装了 Node.js 22 的电脑', text: '程序在本机运行，读者反馈只保存在你的电脑上。' },
-        { title: '一个 Anthropic API key', text: '由 Claude Haiku 5.5 回答，每题约 0.07 美分。' },
+        { title: '一个 Anthropic API key，或者不要', text: '有密钥时由 Claude Haiku 5.5 回答，每题约 0.07 美分。没有密钥时，本地引擎直接从资料里挑原句回答，不花钱。' },
         { title: '中文或英文', text: '两种语言都能问；引文保持原文的语言。' },
       ],
     },

@@ -1,10 +1,25 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { loadKnowledge } from "../lib/knowledge.js";
-import { answerLocally, termsOf, stem, THRESHOLD } from "../lib/local.js";
+import { answerLocally, actionOf, termsOf, stem, THRESHOLD } from "../lib/local.js";
 import { draftEmail } from "../lib/email.js";
 
 const kb = loadKnowledge();
+
+test("actionOf: the instruction in the document's own words, without the lead-in and the deadline", () => {
+  const s = "To cancel an Intro to AI Tools workshop registration, reply to the confirmation email before 11 November 2026 at 18:00 MYT.";
+  assert.equal(actionOf(s, "11 November 2026 at 18:00 MYT"), "Reply to the confirmation email.");
+  assert.equal(actionOf("A person registers through the DemoClub event form.", ""), "A person registers through the DemoClub event form.");
+});
+
+test("no step repeats the bottom line, and the bottom line is the sentence itself", () => {
+  for (const q of ["Do I need programming experience?", "需要带什么设备？", "名额可以转给朋友吗？"]) {
+    const r = answerLocally(kb, { question: q });
+    assert.equal(r.status, "answered");
+    assert.doesNotMatch(r.key_point, /根据《/);
+    for (const step of r.next_steps) assert.notEqual(step.action, r.key_point);
+  }
+});
 
 test("stem: plurals and common endings meet", () => {
   assert.equal(stem("places"), "place");
@@ -60,7 +75,7 @@ test("never invents: an instruction to make up a phone number gets only the docu
 });
 
 test("the email draft uses the documented address and quotes the question", () => {
-  const e = draftEmail({ question: "讲师是谁？", missing_info: "x", kb });
+  const e = draftEmail({ question: "讲师是谁？", kb });
   assert.equal(e.to, "help@democlub.invalid");
   assert.match(e.body, /讲师是谁？/);
   assert.match(e.mailto, /^mailto:help%40democlub\.invalid\?subject=/);

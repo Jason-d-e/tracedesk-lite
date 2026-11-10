@@ -95,8 +95,7 @@ app.post("/api/ask", rateLimit, async (req, res) => {
     const result = engine === "local" ? answerLocally(kb, { question, context }) : await answerQuestion(kb, { question, context, promptId });
     // No answer from the documents: draft the email the reader would send to ask, with the documented contact.
     if (result.status === "insufficient_evidence" || result.status === "withheld") {
-      // The local engine's explanation of itself does not belong in a letter; the model's note on what is missing does.
-      result.email = draftEmail({ question, missing_info: engine === "model" ? result.missing_info : "", kb });
+      result.email = draftEmail({ question, kb });
     }
     logRun({
       source: "web",

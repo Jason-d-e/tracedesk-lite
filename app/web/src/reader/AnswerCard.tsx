@@ -97,21 +97,17 @@ function Evidence({ g }: { g: SourceGroup }) {
 /** When the documents do not answer: the email the reader would send, drafted from the documents' own contact. Copy it or open it; nothing is sent from here. */
 function EmailDraftBox({ email }: { email: EmailDraft }) {
   const { t } = useTranslation()
-  const text = `${t('email.to')}${t('punct.colon')}${email.to || t('email.noAddress')}
-${t('email.subject')}${t('punct.colon')}${email.subject}
-
-${email.body}`
+  const text = `${email.to ? `${t('email.to')}${t('punct.colon')}${email.to}\n` : ''}${t('email.subject')}${t('punct.colon')}${email.subject}\n\n${email.body}`
   return (
     <Box className="td-well" p="md" mt="md" component="section" aria-labelledby="sec-email">
       <Group gap={6} mb={4}>
         <IconMailForward size={16} aria-hidden />
         <Text component="h2" id="sec-email" size="sm" fw={600} m={0}>{t('email.title')}</Text>
       </Group>
-      <Text size="sm" c="dimmed" mb="sm">{t('email.lead')}</Text>
-      <Text size="sm"><Text span fw={600}>{t('email.to')}{t('punct.colon')}</Text>{email.to || <Text span c="dimmed">{t('email.noAddress')}</Text>}</Text>
+      <Text size="sm" c="dimmed" mb="sm">{t('email.lead')}{t('email.join')}{email.note}</Text>
+      {email.to && <Text size="sm"><Text span fw={600}>{t('email.to')}{t('punct.colon')}</Text>{email.to}</Text>}
       <Text size="sm" mb="xs"><Text span fw={600}>{t('email.subject')}{t('punct.colon')}</Text><span lang="en">{email.subject}</span></Text>
       <Text size="sm" lang="en" className="td-quote" style={{ whiteSpace: 'pre-wrap' }} lh={1.6}>{email.body}</Text>
-      <Text size="xs" c="dimmed" mt="xs">{email.note}</Text>
       <Group gap="xs" mt="sm">
         <CopyButton value={text} timeout={2000}>
           {({ copied, copy }) => (
@@ -195,7 +191,7 @@ export default function AnswerCard({
       {/* ① In one sentence */}
       {!withheld && bottomLine && (
         <section aria-labelledby="sec-bottom">
-          <SectionLabel n={++n} id="sec-bottom">{clarify ? t('answer.clarifyHeading') : t('answer.bottomLine')}</SectionLabel>
+          <SectionLabel n={++n} id="sec-bottom">{clarify ? t('answer.clarifyHeading') : t(result.meta.engine === 'local' ? 'answer.bottomLineLocal' : 'answer.bottomLine')}</SectionLabel>
           <KeySentence text={bottomLine} sources={verifiedQuotes} />
           <Group mt="sm" gap="xs">
             <Button variant="light" size="sm" leftSection={speaking ? <IconPlayerStop size={16} /> : <IconVolume size={16} />} onClick={listen}>
@@ -331,7 +327,7 @@ export default function AnswerCard({
           <Button variant="subtle" size="sm" onClick={onNew}>{t('answer.newQuestion')}</Button>
         </Group>
         <Text size="xs" c="dimmed" className="hide-in-focus">
-          {t('answer.meta', { model: result.meta.model_served, seconds: (result.meta.latency_ms / 1000).toFixed(1) })}
+          {result.meta.engine === 'local' ? t('answer.metaLocal') : t('answer.meta', { model: result.meta.model_served, seconds: (result.meta.latency_ms / 1000).toFixed(1) })}
         </Text>
       </Group>
 

@@ -223,8 +223,7 @@ export default function ReaderPage() {
                   {turns.length === 0 && (
                     <Card radius="md" padding="xl" className="hide-in-focus">
                       <Text fw={600} mb={4}>{t('ask.intro.title')}</Text>
-                      <Text size="sm" c="dimmed" mb="xs">{t('ask.intro.text')}</Text>
-                      <Text size="sm" c="dimmed">{t('ask.intro.engines')}</Text>
+                      <Text size="sm" c="dimmed">{t('ask.intro.text')}</Text>
                     </Card>
                   )}
                   {active && !active.result && !active.error && (
