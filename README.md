@@ -2,9 +2,9 @@
 
 **The bottom line first, a checklist you can tick, and a source for every word.**
 
-[![The TraceDesk Lite cover drawn in text characters: the name in block letters, a shield with a tick, and the line “Read less. Never be misled.” One shape then becomes a button, a loader, an answer card, a checklist and a chart. Opens the three-minute demo video.](media/opening.webp)](https://youtu.be/OAQ5FJ5pYlI)
+[![The TraceDesk Lite cover drawn in text characters: the name in block letters, a shield with a tick, and the line “Read less. Never be misled.” One shape then becomes a button, a loader, an answer card, a checklist and a chart. Opens the three-minute demo video.](media/opening.webp)](https://youtu.be/eEHcymuLP58)
 
-Demo video (2 min 59 s): https://youtu.be/OAQ5FJ5pYlI
+Demo video (3 min 13 s): https://youtu.be/eEHcymuLP58
 
 TraceDesk Lite is a help-desk assistant for student organisations, designed for readers who find long, dense text hard to act on. That includes people with ADHD or other attention, reading or executive-function difficulties, and people reading English as a second language. It answers only from the organisation's current documents. Every sentence and every checklist step must quote those documents, and the server checks each quote word for word before anything is shown.
 
